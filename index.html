@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>信息技术学院 - 学员评分系统</title>
-    <!-- 引入拼音转换库，用于自动生成姓名拼音 -->
-    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.4/dist/index.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.4/dist/index.js"></script>
     <style>
         :root {
             --bg: #282c34;
@@ -608,6 +606,7 @@
             padding: 4px 0 10px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            flex-wrap: nowrap;
         }
 
         .overview-student-tabs::-webkit-scrollbar {
@@ -628,6 +627,7 @@
             min-height: 38px;
             display: flex;
             align-items: center;
+            transition: all var(--transition);
         }
 
         .overview-student-tabs .student-tab.active {
@@ -819,14 +819,13 @@
             /** 格式化手机号为 3-4-4 分隔 */
             function formatPhone(phone) {
                 if (!phone) return '';
-                const cleaned = phone.replace(/\s/g, ''); // 移除可能已有的空格
+                const cleaned = phone.replace(/\s/g, '');
                 if (cleaned.length === 11) {
                     return cleaned.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3');
                 }
-                return phone; // 非标准长度原样返回
+                return phone;
             }
 
-            /** 从 localStorage 加载数据 */
             function loadData() {
                 try {
                     const raw = localStorage.getItem(STORAGE_KEY);
@@ -835,16 +834,15 @@
                         appData.students = parsed.students || [];
                         appData.dailyRecords = parsed.dailyRecords || {};
                     } else {
-                        initDemoData();
+                        // initDemoData();
                         saveData();
                     }
                 } catch (e) {
-                    //initDemoData();
+                    initDemoData();
                     saveData();
                 }
             }
 
-            /** 保存数据到 localStorage */
             function saveData() {
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
@@ -853,7 +851,6 @@
                 }
             }
 
-            /** 导出数据到剪贴板 */
             function exportToClipboard() {
                 try {
                     const jsonStr = JSON.stringify(appData, null, 2);
@@ -864,14 +861,12 @@
                 }
             }
 
-            /** 从剪贴板导入并覆盖数据 */
             async function importFromClipboard() {
                 try {
                     let text = '';
                     if (navigator.clipboard && navigator.clipboard.readText) {
                         text = await navigator.clipboard.readText();
                     } else {
-                        // fallback: 使用 textarea 提示手动粘贴，保持交互一致性
                         showToast('当前浏览器不支持读取剪贴板，请手动粘贴 JSON 数据', 'error');
                         const manualInput = prompt('请粘贴 JSON 数据以覆盖导入：');
                         if (!manualInput) return;
@@ -971,7 +966,8 @@
                 if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
                     try {
                         const result = pinyinPro.pinyin(name, { toneType: 'symbol', type: 'array' });
-                        if (result && result.length) return result.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                        if (result && result.length) return result.map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                            .join(' ');
                     } catch (e) {}
                 }
                 return name;
@@ -1010,7 +1006,7 @@
             function escapeHtml(s) { const d = document.createElement('div');
                 d.textContent = s || ''; return d.innerHTML; }
 
-            // ========== 页面切换 ==========
+            // 页面切换
             let currentTab = 'scoring';
             document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
@@ -1033,7 +1029,7 @@
                 attachOverviewEvents();
             }
 
-            // ========== 学员评分页面 ==========
+            // ---------- 学员评分页面 ----------
             function renderScoringPage() {
                 const active = getActiveStudents();
                 if (!active.length) return `<div class="empty-state">📭 暂无学员</div>`;
@@ -1063,7 +1059,7 @@
                 );
             }
 
-            // ========== 详情浮层 ==========
+            // ---------- 详情浮层 ----------
             function openDetailOverlay(sid, dateStr) {
                 const overlay = document.getElementById('detailOverlay');
                 overlay.style.display = 'block';
@@ -1306,7 +1302,7 @@
                 });
             }
 
-            // ========== 学员管理页面 ==========
+            // ---------- 学员管理页面 ----------
             function renderManagePage() {
                 let html = `
                 <div class="section-title">📥 导入学员</div>
@@ -1462,16 +1458,22 @@
                 document.getElementById('editModal').style.display = 'flex';
             }
 
-            // ========== 数据总览页面 ==========
+            // ---------- 数据总览页面 ----------
             function renderOverviewPage() {
                 const allStudents = appData.students;
-                if (!allStudents.length) return `<div class="empty-state">📊 暂无学员</div>`;
-                const defaultId = allStudents[0].id;
-                let html = `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
+                const activeStudents = getActiveStudents();
+                if (!activeStudents.length) {
+                    return `<div class="empty-state">📊 当前没有在读学员，无法显示总览</div>`;
+                }
+                // 默认选中第一个非重修学员
+                const defaultId = activeStudents[0].id;
+                let html =
+                    `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
                 allStudents.forEach((s, i) => {
                     const retakeClass = s.isRetake ? ' retake' : '';
+                    const isActive = (s.id === defaultId) ? ' active' : '';
                     html +=
-                        `<button class="student-tab ${i === 0 ? 'active' : ''}${retakeClass}" data-student-id="${s.id}">${escapeHtml(s.name)}</button>`;
+                        `<button class="student-tab${isActive}${retakeClass}" data-student-id="${s.id}">${escapeHtml(s.name)}</button>`;
                 });
                 html += `</div><div id="overviewDataContainer">${renderOverviewStudentData(defaultId)}</div>`;
                 return html;
@@ -1529,11 +1531,12 @@
                 });
                 allAvgs.sort((a, b) => b.avg - a.avg);
                 const rank = allAvgs.findIndex(a => a.id === sid) + 1;
+                const rankText = allAvgs.length > 0 ? `第 ${rank} 名 / 共 ${allAvgs.length} 人` : '暂无排名';
                 const avgHtml = `
                 <div class="avg-display">
                     <div class="avg-label">📈 平均分 (共${cnt}条记录)</div>
                     <div class="avg-score copyable-text" data-copy="${avg.toFixed(2)}">${avg.toFixed(2)}</div>
-                    <div class="rank-info">🏆 排名: 第 <span style="color:var(--yellow);">${rank}</span> 名 / 共 ${allAvgs.length} 人</div>
+                    <div class="rank-info">🏆 排名: ${rankText}</div>
                     <div style="margin-top:8px;font-size:var(--font-xs);color:var(--comment);">
                         <span class="copyable-text" data-copy="${student.name}">👤 ${escapeHtml(student.name)} (点击复制)</span><br>
                         班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${formatPhone(student.phone)}
@@ -1546,22 +1549,34 @@
             }
 
             function attachOverviewEvents() {
-                document.querySelectorAll('#overviewTabs .student-tab').forEach(tab => {
+                const tabs = document.querySelectorAll('#overviewTabs .student-tab');
+                let currentActiveId = null;
+                // 找到当前 active 的 tab 所对应的学生 ID
+                const activeTab = document.querySelector('#overviewTabs .student-tab.active');
+                if (activeTab) {
+                    currentActiveId = activeTab.dataset.studentId;
+                }
+
+                tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         const sid = tab.dataset.studentId;
                         const student = getStudentById(sid);
+                        // 如果是重修学员，提示并阻止切换
                         if (student && student.isRetake) {
-                            showToast('该学员已被标记为重修', 'error');
+                            showToast('该学员已被标为重修', 'error');
+                            return;
                         }
+                        // 正常切换
                         document.querySelectorAll('#overviewTabs .student-tab').forEach(t => t.classList
                             .remove('active'));
                         tab.classList.add('active');
                         document.getElementById('overviewDataContainer').innerHTML =
                             renderOverviewStudentData(sid);
-                        attachOverviewEvents();
+                        attachOverviewEvents(); // 重新绑定新内容的事件
                         attachCopyListeners();
                     });
                 });
+
                 const toggleBtn = document.getElementById('btnToggleAbsent');
                 if (toggleBtn) {
                     toggleBtn.addEventListener('click', function() {
@@ -1578,7 +1593,7 @@
                 attachCopyListeners();
             }
 
-            // ========== 初始化 ==========
+            // 初始化
             function init() {
                 loadData();
                 renderMainContent();
