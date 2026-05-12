@@ -853,7 +853,8 @@
                         appData.students = parsed.students || [];
                         appData.dailyRecords = parsed.dailyRecords || {};
                     } else {
-                        initDemoData(); // 首次使用生成演示数据
+                        // 首次使用生成演示数据
+                        //initDemoData();
                         saveData();
                     }
                 } catch (e) {
