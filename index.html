@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>信息技术学院 - 学员评分系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.4/dist/index.js">
+    </script>
+    <style>
+        :root {
+            --bg: #282c34;
+            --panel-bg: #21252b;
+            --border: #181a1f;
+            --text: #abb2bf;
+            --text-bright: #dcdfe4;
+            --blue: #61afef;
+            --red: #e06c75;
+            --green: #98c379;
+            --yellow: #e5c07b;
+            --orange: #d19a66;
+            --purple: #c678dd;
+            --cyan: #56b6c2;
+            --comment: #5c6370;
+            --line-num: #4b5263;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --font-xs: 0.7rem;
+            --font-sm: 0.8rem;
+            --font-md: 0.9rem;
+            --font-lg: 1rem;
+            --font-xl: 1.15rem;
+            --font-2xl: 1.4rem;
+            --transition: 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input, select, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-bottom: calc(70px + var(--safe-bottom));
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .app-header {
+            background: var(--panel-bg);
+            border-bottom: 2px solid var(--border);
+            padding: 14px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-header h1 {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: 0.04em;
+        }
+
+        .app-header .subtitle {
+            font-size: var(--font-xs);
+            color: var(--comment);
+            letter-spacing: 0.06em;
+            margin-top: 2px;
+        }
+
+        .main-content {
+            padding: 12px 14px;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--panel-bg);
+            border-top: 2px solid var(--border);
+            display: flex;
+            z-index: 200;
+            padding-bottom: var(--safe-bottom);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px 8px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--comment);
+            font-size: var(--font-sm);
+            font-weight: 500;
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            outline: none;
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.4rem;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 25%;
+            right: 25%;
+            height: 3px;
+            background: var(--blue);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .student-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--card-shadow);
+        }
+
+        .student-card:active {
+            transform: scale(0.985);
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(97, 175, 239, 0.25);
+        }
+
+        .student-card .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .student-card .card-name {
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        .student-card .card-id {
+            font-size: var(--font-sm);
+            color: var(--comment);
+        }
+
+        .card-info {
+            font-size: var(--font-xs);
+            color: var(--text);
+            margin-top: 4px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .card-info span {
+            background: rgba(97, 175, 239, 0.08);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .card-status-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .capsule {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: var(--font-xs);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .capsule-success {
+            background: rgba(152, 195, 121, 0.18);
+            color: var(--green);
+            border: 1px solid rgba(152, 195, 121, 0.4);
+        }
+
+        .capsule-danger {
+            background: rgba(224, 108, 117, 0.18);
+            color: var(--red);
+            border: 1px solid rgba(224, 108, 117, 0.4);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            font-size: var(--font-md);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+            letter-spacing: 0.03em;
+            min-height: 44px;
+            white-space: nowrap;
+            outline: none;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #1a1d23;
+        }
+
+        .btn-primary:active {
+            background: #4d9fde;
+        }
+
+        .btn-secondary {
+            background: var(--line-num);
+            color: var(--text-bright);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--blue);
+            color: var(--blue);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: var(--font-xs);
+            min-height: 34px;
+            border-radius: 6px;
+        }
+
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 0.65rem;
+            min-height: 28px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .copyable-text {
+            cursor: pointer;
+            transition: all 0.15s;
+            border-bottom: 1px dashed transparent;
+        }
+
+        .copyable-text:active {
+            background: rgba(97, 175, 239, 0.15);
+            border-bottom-color: var(--blue);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--font-xs);
+            font-weight: 600;
+            color: var(--text-bright);
+            margin-bottom: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-bright);
+            font-size: var(--font-md);
+            transition: all var(--transition);
+            outline: none;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(97, 175, 239, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--comment);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 300;
+            overflow-y: auto;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .overlay-header {
+            background: var(--panel-bg);
+            border-bottom: 2px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .overlay-header .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--line-num);
+            color: var(--text-bright);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .overlay-header .overlay-title {
+            font-weight: 700;
+            font-size: var(--font-lg);
+            color: var(--text-bright);
+            flex: 1;
+            text-align: center;
+            margin-right: 40px;
+        }
+
+        .overlay-body {
+            padding: 14px 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .date-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 16px;
+            background: var(--panel-bg);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+        }
+
+        .date-nav .date-display {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-bright);
+            min-width: 110px;
+            text-align: center;
+        }
+
+        .date-nav .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--line-num);
+            color: var(--text-bright);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-nav .nav-btn:active {
+            background: var(--blue);
+            color: #1a1d23;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .score-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .score-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .score-item .score-label {
+            font-size: var(--font-xs);
+            color: var(--comment);
+        }
+
+        .section-title {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-bright);
+            margin: 16px 0 10px;
+            padding-left: 8px;
+            border-left: 4px solid var(--blue);
+        }
+
+        .student-list-item {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-retake {
+            background: rgba(224, 108, 117, 0.2);
+            color: var(--red);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: rgba(152, 195, 121, 0.2);
+            color: var(--green);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+            font-weight: 600;
+        }
+
+        .overview-student-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 4px 0 10px;
+            scrollbar-width: none;
+        }
+
+        .overview-student-tabs .student-tab {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--panel-bg);
+            color: var(--text);
+            font-size: var(--font-sm);
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+        }
+
+        .overview-student-tabs .student-tab.active {
+            background: var(--blue);
+            color: #1a1d23;
+            border-color: var(--blue);
+        }
+
+        .date-record {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .date-record .date-col {
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        .date-record .score-col {
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .tag-sick {
+            background: rgba(229, 192, 123, 0.2);
+            color: var(--yellow);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+        }
+
+        .tag-absent {
+            background: rgba(224, 108, 117, 0.2);
+            color: var(--red);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+        }
+
+        .tag-late {
+            background: rgba(209, 154, 102, 0.2);
+            color: var(--orange);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+        }
+
+        .tag-normal {
+            background: rgba(152, 195, 121, 0.15);
+            color: var(--green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: var(--font-xs);
+        }
+
+        .avg-display {
+            background: var(--panel-bg);
+            border: 2px solid var(--blue);
+            border-radius: var(--radius-lg);
+            padding: 14px 18px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .avg-display .avg-score {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            border: 1.5px solid var(--border);
+            color: var(--text-bright);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: var(--font-sm);
+            font-weight: 600;
+            z-index: 500;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards;
+        }
+
+        .toast.error {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .toast.success {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="app-header">
+    <h1>信息技术学院</h1>
+    <div class="subtitle">学员评分管理系统</div>
+</header>
+<div class="main-content" id="mainContent"></div>
+<nav class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-tab="scoring"><span class="tab-icon">📋</span> 学员评分</button>
+    <button class="tab-btn" data-tab="manage"><span class="tab-icon">👥</span> 学员管理</button>
+    <button class="tab-btn" data-tab="overview"><span class="tab-icon">📊</span> 数据总览</button>
+</nav>
+<div class="overlay" id="detailOverlay" style="display: none;"></div>
+<div id="toastContainer"></div>
+<script>
+    (function () {
+        const STORAGE_KEY = 'it_college_score_v4';
+        let appData = {students: [], dailyRecords: {}};
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    appData.students = parsed.students || [];
+                    appData.dailyRecords = parsed.dailyRecords || {};
+                } else {
+                    //initDemoData();
+                    saveData();
+                }
+            } catch (e) {
+                initDemoData();
+                saveData();
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            } catch (e) {
+                showToast('存储空间不足', 'error');
+            }
+        }
+
+        function initDemoData() {
+            const today = getTodayStr();
+            const students = [
+                {
+                    id: '2424001',
+                    name: '张三',
+                    pinyin: 'Zhāng Sān',
+                    class: '计算机科学1班',
+                    area: 'A区-301',
+                    phone: '13800001001',
+                    isRetake: false,
+                    noteSubmitDate: null,
+                    summarySubmitDate: null
+                },
+                {
+                    id: '2424002',
+                    name: '李四',
+                    pinyin: 'Lǐ Sì',
+                    class: '计算机科学1班',
+                    area: 'B区-205',
+                    phone: '13800001002',
+                    isRetake: false,
+                    noteSubmitDate: '2026-05-05',
+                    summarySubmitDate: null
+                },
+                {
+                    id: '2424003',
+                    name: '王五',
+                    pinyin: 'Wáng Wǔ',
+                    class: '计算机科学2班',
+                    area: 'C区-118',
+                    phone: '13800001003',
+                    isRetake: false,
+                    noteSubmitDate: '2026-05-03',
+                    summarySubmitDate: '2026-05-10'
+                },
+                {
+                    id: '2424004',
+                    name: '赵六',
+                    pinyin: 'Zhào Liù',
+                    class: '计算机科学2班',
+                    area: 'A区-302',
+                    phone: '13800001004',
+                    isRetake: true,
+                    noteSubmitDate: null,
+                    summarySubmitDate: null
+                },
+            ];
+            const dailyRecords = {};
+            const ids = ['2424001', '2424002', '2424003'];
+            const start = new Date(2026, 4, 1);
+            for (let d = new Date(start); d <= new Date(); d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 || d.getDay() === 6) continue;
+                const ds = formatDate(d);
+                ids.forEach(sid => {
+                    if (!dailyRecords[sid]) dailyRecords[sid] = {};
+                    const rand = Math.random();
+                    let bt = 'normal';
+                    if (rand < 0.06) bt = 'absent';
+                    else if (rand < 0.14) bt = 'sick';
+                    else if (rand < 0.22) bt = 'late';
+                    dailyRecords[sid][ds] = {
+                        checkedIn: (bt === 'normal' || bt === 'late'),
+                        baseScoreType: bt,
+                        scores: {
+                            blackboardGroove: Math.random() > 0.5 ? 4 : 0,
+                            desk: Math.random() > 0.5 ? 2 : 0,
+                            drawerClean: Math.random() > 0.5 ? 3 : 0,
+                            floorClean: Math.random() > 0.5 ? 3 : 0,
+                            blackboard: [0, 2, 4, 6, 7, 8][Math.floor(Math.random() * 6)],
+                            extraScore: 0,
+                            extraNote: ''
+                        },
+                        blackboardLevel: ['none', 'quarter', 'half', 'lessThanQuarter', 'moreThanHalf', 'veryClean'][Math.floor(Math.random() * 6)],
+                    };
+                });
+            }
+            appData.students = students;
+            appData.dailyRecords = dailyRecords;
+        }
+
+        function formatDate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function parseDate(str) {
+            const [y, m, d] = str.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
+
+        function formatDateShort(str) {
+            const [, m, d] = str.split('-');
+            return `${parseInt(m)}/${parseInt(d)}`;
+        }
+
+        function getTodayStr() {
+            return formatDate(new Date());
+        }
+
+        function getBaseScore(type) {
+            return {normal: 80, sick: 70, absent: 60, late: 75}[type] || 80;
+        }
+
+        function calcTotalScore(record) {
+            if (!record) return 0;
+            const s = record.scores || {};
+            let total = getBaseScore(record.baseScoreType) + (s.blackboardGroove || 0) + (s.desk || 0) + (s.drawerClean || 0) + (s.floorClean || 0) + (s.blackboard || 0) + (s.extraScore || 0);
+            return Math.min(total, 100);
+        }
+
+        function getStudentById(id) {
+            return appData.students.find(s => s.id === id);
+        }
+
+        function getActiveStudents() {
+            return appData.students.filter(s => !s.isRetake);
+        }
+
+        function getPinyin(name) {
+            if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
+                try {
+                    const result = pinyinPro.pinyin(name, {toneType: 'symbol', type: 'array'});
+                    if (result && result.length) return result.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                } catch (e) {
+                }
+            }
+            return name;
+        }
+
+        function showToast(msg, type = '') {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            container.appendChild(t);
+            setTimeout(() => {
+                if (t.parentNode) t.remove();
+            }, 2600);
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text, 'success')).catch(() => fallbackCopy(text));
+            } else fallbackCopy(text);
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('已复制: ' + text, 'success');
+            } catch (e) {
+                showToast('复制失败', 'error');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s || '';
+            return d.innerHTML;
+        }
+
+        // ---------- TABS ----------
+        let currentTab = 'scoring';
+        document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const ab = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+            if (ab) ab.classList.add('active');
+            document.getElementById('detailOverlay').style.display = 'none';
+            renderMainContent();
+        }
+
+        function renderMainContent() {
+            const c = document.getElementById('mainContent');
+            if (currentTab === 'scoring') c.innerHTML = renderScoringPage();
+            else if (currentTab === 'manage') c.innerHTML = renderManagePage();
+            else if (currentTab === 'overview') c.innerHTML = renderOverviewPage();
+            attachScoringEvents();
+            attachManageEvents();
+            attachOverviewEvents();
+        }
+
+        // ---------- SCORING PAGE ----------
+        function renderScoringPage() {
+            const active = getActiveStudents();
+            if (!active.length) return `<div class="empty-state">📭 暂无学员</div>`;
+            const today = getTodayStr();
+            return active.map(s => {
+                const rec = (appData.dailyRecords[s.id] && appData.dailyRecords[s.id][today]) || null;
+                const checkedIn = rec ? rec.checkedIn : false;
+                const noteDone = s.noteSubmitDate && s.noteSubmitDate <= today;
+                const summaryDone = s.summarySubmitDate && s.summarySubmitDate <= today;
+                const total = rec ? calcTotalScore(rec) : null;
+                return `
+                    <div class="student-card" data-student-id="${s.id}" data-action="open-detail">
+                        <div class="card-row"><span class="card-name">${escapeHtml(s.name)}</span><span class="card-id">${escapeHtml(s.id)}</span></div>
+                        <div class="card-info"><span>📖 ${escapeHtml(s.class)}</span><span>📍 ${escapeHtml(s.area)}</span>${total !== null ? `<span>📊 ${total}分</span>` : ''}</div>
+                        <div class="card-status-row">
+                            <span class="capsule ${checkedIn ? 'capsule-success' : 'capsule-danger'}">签到: ${checkedIn ? '✓ 已达成' : '✗ 未达成'}</span>
+                            <span class="capsule ${noteDone ? 'capsule-success' : 'capsule-danger'}">动员笔记: ${noteDone ? '✓ 已达成' : '✗ 未达成'}</span>
+                            <span class="capsule ${summaryDone ? 'capsule-success' : 'capsule-danger'}">结业小结: ${summaryDone ? '✓ 已达成' : '✗ 未达成'}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function attachScoringEvents() {
+            document.querySelectorAll('.student-card[data-action="open-detail"]').forEach(c => c.addEventListener('click', () => openDetailOverlay(c.dataset.studentId, getTodayStr())));
+        }
+
+        // ---------- DETAIL OVERLAY ----------
+        function openDetailOverlay(sid, dateStr) {
+            const overlay = document.getElementById('detailOverlay');
+            overlay.style.display = 'block';
+            overlay.dataset.studentId = sid;
+            overlay.dataset.currentDate = dateStr;
+            renderDetailContent(sid, dateStr);
+            overlay.scrollTop = 0;
+        }
+
+        function closeDetailOverlay() {
+            document.getElementById('detailOverlay').style.display = 'none';
+            renderMainContent();
+        }
+
+        function renderDetailContent(sid, dateStr) {
+            const overlay = document.getElementById('detailOverlay');
+            const student = getStudentById(sid);
+            if (!student) {
+                overlay.innerHTML = '<div class="empty-state">学员不存在</div>';
+                return;
+            }
+            const record = (appData.dailyRecords[sid] && appData.dailyRecords[sid][dateStr]) || null;
+            const baseType = record ? record.baseScoreType : 'normal';
+            const checkedIn = (baseType === 'normal' || baseType === 'late');
+            const noteDone = student.noteSubmitDate && student.noteSubmitDate <= dateStr;
+            const summaryDone = student.summarySubmitDate && student.summarySubmitDate <= dateStr;
+            const scores = record ? (record.scores || {}) : {};
+            const bbLevel = record ? (record.blackboardLevel || 'none') : 'none';
+            const totalScore = record ? calcTotalScore(record) : getBaseScore('normal');
+            const baseScore = getBaseScore(baseType);
+            const dateDisplay = formatDateShort(dateStr);
+            const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][parseDate(dateStr).getDay()];
+
+            const bbOptions = [
+                {value: 'none', label: '未清洁/残留痕迹', score: 0}, {value: 'quarter', label: '1/4 清洁', score: 2},
+                {value: 'half', label: '1/2 清洁', score: 4}, {
+                    value: 'lessThanQuarter',
+                    label: '少于1/4 残留',
+                    score: 6
+                },
+                {value: 'moreThanHalf', label: '多于1/2 清洁', score: 7}, {
+                    value: 'veryClean',
+                    label: '非常干净',
+                    score: 8
+                }
+            ];
+            const baseOptions = [
+                {value: 'normal', label: '正常 (80分)'}, {value: 'sick', label: '病假 (70分)'},
+                {value: 'late', label: '迟到 (75分)'}, {value: 'absent', label: '旷班 (60分)'}
+            ];
+            const scoreFields = [
+                {id: 'blackboardGroove', label: '黑版槽', full: 4}, {id: 'desk', label: '桌椅', full: 2},
+                {id: 'drawerClean', label: '抽屉清洁', full: 3}, {id: 'floorClean', label: '地面清洁', full: 3}
+            ];
+            const scoreSelects = scoreFields.map(f => {
+                const cur = scores[f.id] || 0;
+                return `<div class="score-item"><span class="score-label">${f.label} (满分${f.full}分)</span>
+                    <select class="form-input score-binary" data-field="${f.id}" data-full="${f.full}">
+                        <option value="full" ${cur >= f.full ? 'selected' : ''}>达标 (${f.full}分)</option>
+                        <option value="zero" ${cur < f.full ? 'selected' : ''}>未达标 (0分)</option>
+                    </select></div>`;
+            }).join('');
+
+            overlay.innerHTML = `
+                <div class="overlay-header">
+                    <button class="back-btn" id="btnCloseDetail">←</button>
+                    <span class="overlay-title">学员详情</span>
+                </div>
+                <div class="overlay-body">
+                    <div class="date-nav">
+                        <button class="nav-btn" id="btnPrevDay">◀</button>
+                        <span class="date-display">${dateDisplay}</span>
+                        <button class="nav-btn" id="btnNextDay">▶</button>
+                    </div>
+                    <div style="text-align:center;font-size:var(--font-xs);color:var(--comment);margin-bottom:12px;">${dateStr} (周${dayOfWeek})</div>
+                    <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span class="copyable-text" data-copy="${student.name}" style="font-weight:700;font-size:var(--font-lg);color:var(--text-bright);">${escapeHtml(student.name)}</span>
+                            <button class="btn btn-xs btn-outline" id="btnCopyIdName" data-copy="${student.id}${student.name}">📋 复制学号姓名</button>
+                        </div>
+                        <div style="font-size:var(--font-xs);color:var(--comment);margin-top:4px;">
+                            <span class="copyable-text" data-copy="${student.id}">学号: ${escapeHtml(student.id)}</span> |
+                            <span class="copyable-text" data-copy="${student.pinyin}">拼音: ${escapeHtml(student.pinyin)}</span>
+                        </div>
+                        <div style="font-size:var(--font-xs);color:var(--comment);">
+                            <span class="copyable-text" data-copy="${student.class}">班级: ${escapeHtml(student.class)}</span> |
+                            <span class="copyable-text" data-copy="${student.area}">责任区: ${escapeHtml(student.area)}</span>
+                        </div>
+                        <div style="font-size:var(--font-xs);color:var(--comment);">
+                            <span class="copyable-text" data-copy="${student.phone}">手机: ${escapeHtml(student.phone)}</span>
+                        </div>
+                    </div>
+                    <div class="card-status-row" style="margin-bottom:14px;">
+                        <span class="capsule ${checkedIn ? 'capsule-success' : 'capsule-danger'}">签到: ${checkedIn ? '✓ 已达成' : '✗ 未达成'}</span>
+                        <span class="capsule ${noteDone ? 'capsule-success' : 'capsule-danger'}">动员笔记: ${noteDone ? '✓ 已达成' : '✗ 未达成'}</span>
+                        <span class="capsule ${summaryDone ? 'capsule-success' : 'capsule-danger'}">结业小结: ${summaryDone ? '✓ 已达成' : '✗ 未达成'}</span>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${!noteDone ? `<button class="btn btn-sm btn-outline" id="btnSubmitNote">📝 上交动员笔记</button>` : ''}
+                        ${!summaryDone ? `<button class="btn btn-sm btn-outline" id="btnSubmitSummary">📄 上交结业小结</button>` : ''}
+                    </div>
+                    <div class="section-title">⚙️ 基础分设置</div>
+                    <div class="form-group">
+                        <label>出勤状态 (自动关联签到)</label>
+                        <select class="form-input" id="selectBaseType">${baseOptions.map(o => `<option value="${o.value}" ${baseType === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}</select>
+                    </div>
+                    <div style="font-size:var(--font-xs);color:var(--comment);margin-bottom:8px;">当前基础分: <span style="font-weight:700;color:var(--yellow);">${baseScore}分</span></div>
+                    <div class="section-title">📝 评分区</div>
+                    <div class="score-grid">
+                        ${scoreSelects}
+                        <div class="score-item full-width">
+                            <span class="score-label">黑版等第 (满分8分)</span>
+                            <select class="form-input" id="selectBlackboardLevel">${bbOptions.map(o => `<option value="${o.value}" ${bbLevel === o.value ? 'selected' : ''}>${o.label} (${o.score}分)</option>`).join('')}</select>
+                        </div>
+                        <div class="score-item full-width">
+                            <span class="score-label">额外加分 (0~5分)</span>
+                            <input type="number" id="scoreExtra" class="form-input" value="${scores.extraScore || 0}" min="0" max="5" step="0.5" style="text-align:center;">
+                        </div>
+                        <div class="score-item full-width">
+                            <span class="score-label">加分说明</span>
+                            <input type="text" id="scoreExtraNote" class="form-input" value="${escapeHtml(scores.extraNote || '')}" placeholder="填写加分原因" maxlength="50">
+                        </div>
+                    </div>
+                    <div style="text-align:center;margin:16px 0;padding:14px;background:var(--panel-bg);border:2px solid var(--blue);border-radius:var(--radius-lg);">
+                        <div style="font-size:var(--font-xs);color:var(--comment);">当日总分 (上限100分)</div>
+                        <div style="font-size:2.2rem;font-weight:800;color:var(--blue);" id="detailTotalScore">${totalScore}</div>
+                        <div style="font-size:var(--font-xs);color:var(--comment);">基础分 ${baseScore} + 评分区 ${totalScore - baseScore}</div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;margin-bottom:20px;" id="btnSaveDetail">💾 保存评分</button>
+                </div>`;
+            attachDetailEvents(sid, dateStr);
+            attachDetailScoreListeners();
+            attachCopyListeners();
+        }
+
+        function attachDetailEvents(sid, dateStr) {
+            const overlay = document.getElementById('detailOverlay');
+            overlay.querySelector('#btnCloseDetail')?.addEventListener('click', closeDetailOverlay);
+            overlay.querySelector('#btnPrevDay')?.addEventListener('click', () => {
+                const d = parseDate(overlay.dataset.currentDate);
+                d.setDate(d.getDate() - 1);
+                overlay.dataset.currentDate = formatDate(d);
+                renderDetailContent(sid, overlay.dataset.currentDate);
+            });
+            overlay.querySelector('#btnNextDay')?.addEventListener('click', () => {
+                const d = parseDate(overlay.dataset.currentDate);
+                d.setDate(d.getDate() + 1);
+                overlay.dataset.currentDate = formatDate(d);
+                renderDetailContent(sid, overlay.dataset.currentDate);
+            });
+            overlay.querySelector('#btnSubmitNote')?.addEventListener('click', () => {
+                const s = getStudentById(sid);
+                if (s) {
+                    s.noteSubmitDate = overlay.dataset.currentDate;
+                    saveData();
+                    showToast('动员笔记已标记', 'success');
+                    renderDetailContent(sid, overlay.dataset.currentDate);
+                }
+            });
+            overlay.querySelector('#btnSubmitSummary')?.addEventListener('click', () => {
+                const s = getStudentById(sid);
+                if (s) {
+                    s.summarySubmitDate = overlay.dataset.currentDate;
+                    saveData();
+                    showToast('结业小结已标记', 'success');
+                    renderDetailContent(sid, overlay.dataset.currentDate);
+                }
+            });
+            overlay.querySelector('#btnSaveDetail')?.addEventListener('click', () => saveDetailData(sid, overlay.dataset.currentDate));
+            overlay.querySelector('#btnCopyIdName')?.addEventListener('click', (e) => {
+                const t = e.currentTarget.dataset.copy;
+                if (t) copyToClipboard(t);
+            });
+        }
+
+        function saveDetailData(sid, dateStr) {
+            const overlay = document.getElementById('detailOverlay');
+            if (!appData.dailyRecords[sid]) appData.dailyRecords[sid] = {};
+            if (!appData.dailyRecords[sid][dateStr]) appData.dailyRecords[sid][dateStr] = {
+                checkedIn: false, baseScoreType: 'normal',
+                scores: {
+                    blackboardGroove: 0,
+                    desk: 0,
+                    drawerClean: 0,
+                    floorClean: 0,
+                    blackboard: 0,
+                    extraScore: 0,
+                    extraNote: ''
+                },
+                blackboardLevel: 'none'
+            };
+            const rec = appData.dailyRecords[sid][dateStr];
+            rec.baseScoreType = overlay.querySelector('#selectBaseType')?.value || 'normal';
+            rec.checkedIn = (rec.baseScoreType === 'normal' || rec.baseScoreType === 'late');
+            const bbMap = {none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8};
+            rec.blackboardLevel = overlay.querySelector('#selectBlackboardLevel')?.value || 'none';
+            rec.scores.blackboard = bbMap[rec.blackboardLevel] || 0;
+            document.querySelectorAll('.score-binary').forEach(sel => {
+                const field = sel.dataset.field;
+                const full = parseFloat(sel.dataset.full);
+                rec.scores[field] = sel.value === 'full' ? full : 0;
+            });
+            rec.scores.extraScore = Math.min(5, Math.max(0, parseFloat(overlay.querySelector('#scoreExtra')?.value) || 0));
+            rec.scores.extraNote = overlay.querySelector('#scoreExtraNote')?.value?.trim() || '';
+            saveData();
+            showToast('评分已保存 ✓', 'success');
+            renderDetailContent(sid, dateStr);
+        }
+
+        function attachDetailScoreListeners() {
+            const overlay = document.getElementById('detailOverlay');
+            const updateTotal = () => {
+                const baseType = overlay.querySelector('#selectBaseType')?.value || 'normal';
+                let base = getBaseScore(baseType);
+                let extra = 0;
+                document.querySelectorAll('.score-binary').forEach(sel => {
+                    if (sel.value === 'full') extra += parseFloat(sel.dataset.full);
+                });
+                const bbMap = {none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8};
+                extra += bbMap[overlay.querySelector('#selectBlackboardLevel')?.value] || 0;
+                extra += Math.min(5, parseFloat(overlay.querySelector('#scoreExtra')?.value) || 0);
+                const total = Math.min(base + extra, 100);
+                const totalEl = overlay.querySelector('#detailTotalScore');
+                if (totalEl) totalEl.textContent = total;
+                const breakdown = overlay.querySelector('div[style*="基础分"]');
+                if (breakdown) breakdown.textContent = `基础分 ${base} + 评分区 ${extra} (上限100)`;
+            };
+            overlay.querySelectorAll('#selectBaseType, .score-binary, #selectBlackboardLevel, #scoreExtra').forEach(el => {
+                el.addEventListener('change', updateTotal);
+                el.addEventListener('input', updateTotal);
+            });
+        }
+
+        function attachCopyListeners() {
+            document.querySelectorAll('.copyable-text').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const t = e.currentTarget.dataset.copy;
+                    if (t) copyToClipboard(t);
+                });
+            });
+        }
+
+        // ---------- MANAGE PAGE ----------
+        function renderManagePage() {
+            let html = `
+                <div class="section-title">📥 导入学员</div>
+                <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:16px;">
+                    <div class="form-group"><label>姓名 *</label><input type="text" class="form-input" id="inputName" placeholder="请输入姓名"></div>
+                    <div class="form-group"><label>姓名拼音 <span style="font-size:var(--font-xs);color:var(--comment);">(自动生成，不可编辑)</span></label><input type="text" class="form-input" id="inputPinyin" placeholder="自动生成" readonly style="background:var(--border);"></div>
+                    <div class="form-row"><div class="form-group"><label>学号 *</label><input type="text" class="form-input" id="inputId" placeholder="如: 2424005"></div><div class="form-group"><label>班级 *</label><input type="text" class="form-input" id="inputClass" placeholder="如: 计算机科学1班"></div></div>
+                    <div class="form-row"><div class="form-group"><label>手机号 *</label><input type="tel" class="form-input" id="inputPhone" placeholder="请输入手机号"></div><div class="form-group"><label>责任区 *</label><input type="text" class="form-input" id="inputArea" placeholder="如: A区-301"></div></div>
+                    <button class="btn btn-primary" style="width:100%;" id="btnImport">➕ 导入学员</button>
+                </div>
+                <div class="section-title">👥 学员列表</div>
+                <div style="margin-bottom:10px;"><button class="btn btn-danger btn-sm" id="btnClearAll">🗑️ 清空所有学员</button></div>
+                <div id="studentListContainer">`;
+            if (!appData.students.length) html += `<div class="empty-state">📭 暂无学员</div>`;
+            else appData.students.forEach(s => {
+                html += `
+                    <div class="student-list-item">
+                        <div class="info">
+                            <div class="name">${escapeHtml(s.name)} ${s.isRetake ? '<span class="badge-retake">重修</span>' : '<span class="badge-active">在读</span>'}</div>
+                            <div class="detail">学号: ${escapeHtml(s.id)} | ${escapeHtml(s.class)} | ${escapeHtml(s.area)}</div>
+                            <div class="detail">📱 ${escapeHtml(s.phone)} | 🔤 ${escapeHtml(s.pinyin)}</div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-xs btn-secondary btn-edit-student" data-student-id="${s.id}">✏️ 编辑</button>
+                            <button class="btn btn-xs ${s.isRetake ? 'btn-outline' : 'btn-danger'} btn-toggle-retake" data-student-id="${s.id}">${s.isRetake ? '🔄 恢复' : '🚫 设为重修'}</button>
+                            <button class="btn btn-xs btn-danger btn-delete-student" data-student-id="${s.id}">🗑️ 删除</button>
+                        </div>
+                    </div>`;
+            });
+            html += `</div>
+                <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;">
+                    <div style="background:var(--panel-bg);border:2px solid var(--border);border-radius:var(--radius-lg);padding:20px;width:90%;max-width:450px;">
+                        <h3 style="color:var(--text-bright);margin-bottom:12px;">编辑学员信息</h3>
+                        <input type="hidden" id="editStudentId">
+                        <div class="form-group"><label>姓名</label><input type="text" class="form-input" id="editName"></div>
+                        <div class="form-group"><label>拼音 (自动生成)</label><input type="text" class="form-input" id="editPinyin" readonly style="background:var(--border);"></div>
+                        <div class="form-group"><label>学号</label><input type="text" class="form-input" id="editId"></div>
+                        <div class="form-group"><label>班级</label><input type="text" class="form-input" id="editClass"></div>
+                        <div class="form-group"><label>手机号</label><input type="tel" class="form-input" id="editPhone"></div>
+                        <div class="form-group"><label>责任区</label><input type="text" class="form-input" id="editArea"></div>
+                        <div style="display:flex;gap:8px;margin-top:14px;"><button class="btn btn-primary" style="flex:1;" id="btnSaveEdit">💾 保存</button><button class="btn btn-secondary" style="flex:1;" id="btnCancelEdit">取消</button></div>
+                    </div>
+                </div>`;
+            return html;
+        }
+
+        function attachManageEvents() {
+            const inputName = document.getElementById('inputName');
+            const inputPinyin = document.getElementById('inputPinyin');
+            if (inputName) inputName.addEventListener('input', () => {
+                inputPinyin.value = inputName.value.trim() ? getPinyin(inputName.value.trim()) : '';
+            });
+            document.getElementById('btnImport')?.addEventListener('click', () => {
+                const name = document.getElementById('inputName')?.value.trim();
+                const pinyin = document.getElementById('inputPinyin')?.value.trim();
+                const id = document.getElementById('inputId')?.value.trim();
+                const cls = document.getElementById('inputClass')?.value.trim();
+                const phone = document.getElementById('inputPhone')?.value.trim();
+                const area = document.getElementById('inputArea')?.value.trim();
+                if (!name || !id || !cls || !phone || !area) return showToast('请填写所有字段', 'error');
+                if (appData.students.find(s => s.id === id)) return showToast('学号已存在', 'error');
+                if (appData.students.find(s => s.phone === phone)) return showToast('手机号已存在', 'error');
+                if (appData.students.find(s => s.area === area)) return showToast('责任区已存在', 'error');
+                appData.students.push({
+                    id,
+                    name,
+                    pinyin: pinyin || getPinyin(name),
+                    class: cls,
+                    area,
+                    phone,
+                    isRetake: false,
+                    noteSubmitDate: null,
+                    summarySubmitDate: null
+                });
+                saveData();
+                showToast(`学员 ${name} 导入成功`, 'success');
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputPinyin').value = '';
+                document.getElementById('inputPhone').value = '';
+                renderMainContent();
+            });
+            document.querySelectorAll('.btn-edit-student').forEach(b => b.addEventListener('click', () => openEditModal(b.dataset.studentId)));
+            document.querySelectorAll('.btn-toggle-retake').forEach(b => b.addEventListener('click', () => {
+                const s = getStudentById(b.dataset.studentId);
+                if (s) {
+                    s.isRetake = !s.isRetake;
+                    saveData();
+                    showToast(s.isRetake ? '已设为重修' : '已恢复在读', 'success');
+                    renderMainContent();
+                }
+            }));
+            document.querySelectorAll('.btn-delete-student').forEach(b => b.addEventListener('click', () => {
+                const sid = b.dataset.studentId;
+                if (confirm(`确定要删除学员 ${getStudentById(sid)?.name || sid} 吗？`)) {
+                    if (confirm(`再次确认删除？此操作不可恢复！`)) {
+                        appData.students = appData.students.filter(s => s.id !== sid);
+                        if (appData.dailyRecords[sid]) delete appData.dailyRecords[sid];
+                        saveData();
+                        showToast('学员已删除', 'success');
+                        renderMainContent();
+                    }
+                }
+            }));
+            document.getElementById('btnClearAll')?.addEventListener('click', () => {
+                if (confirm('确定要清空所有学员吗？')) {
+                    if (confirm('再次确认清空？所有学员及评分数据将被永久删除！')) {
+                        appData.students = [];
+                        appData.dailyRecords = {};
+                        saveData();
+                        showToast('所有学员已清空', 'success');
+                        renderMainContent();
+                    }
+                }
+            });
+            document.getElementById('btnSaveEdit')?.addEventListener('click', () => {
+                const sid = document.getElementById('editStudentId')?.value;
+                const s = getStudentById(sid);
+                if (!s) return;
+                const newId = document.getElementById('editId')?.value.trim();
+                if (newId !== sid && appData.students.find(s => s.id === newId)) return showToast('学号已存在', 'error');
+                s.name = document.getElementById('editName')?.value.trim() || s.name;
+                s.pinyin = getPinyin(s.name);
+                s.id = newId || s.id;
+                s.class = document.getElementById('editClass')?.value.trim() || s.class;
+                s.phone = document.getElementById('editPhone')?.value.trim() || s.phone;
+                s.area = document.getElementById('editArea')?.value.trim() || s.area;
+                if (newId && newId !== sid) {
+                    if (appData.dailyRecords[sid]) {
+                        appData.dailyRecords[newId] = appData.dailyRecords[sid];
+                        delete appData.dailyRecords[sid];
+                    }
+                }
+                saveData();
+                document.getElementById('editModal').style.display = 'none';
+                showToast('学员信息已更新', 'success');
+                renderMainContent();
+            });
+            document.getElementById('btnCancelEdit')?.addEventListener('click', () => document.getElementById('editModal').style.display = 'none');
+            document.getElementById('editModal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('editModal')) document.getElementById('editModal').style.display = 'none';
+            });
+            document.getElementById('editName')?.addEventListener('input', function () {
+                document.getElementById('editPinyin').value = getPinyin(this.value.trim());
+            });
+        }
+
+        function openEditModal(sid) {
+            const s = getStudentById(sid);
+            if (!s) return;
+            document.getElementById('editStudentId').value = s.id;
+            document.getElementById('editName').value = s.name;
+            document.getElementById('editPinyin').value = s.pinyin;
+            document.getElementById('editId').value = s.id;
+            document.getElementById('editClass').value = s.class;
+            document.getElementById('editPhone').value = s.phone;
+            document.getElementById('editArea').value = s.area;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // ---------- OVERVIEW PAGE ----------
+        function renderOverviewPage() {
+            const active = getActiveStudents();
+            if (!active.length) return `<div class="empty-state">📊 暂无在读学员</div>`;
+            const defaultId = active[0].id;
+            let html = `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
+            active.forEach((s, i) => html += `<button class="student-tab ${i === 0 ? 'active' : ''}" data-student-id="${s.id}">${escapeHtml(s.name)}</button>`);
+            html += `</div><div id="overviewDataContainer">${renderOverviewStudentData(defaultId)}</div>`;
+            return html;
+        }
+
+        function renderOverviewStudentData(sid) {
+            const student = getStudentById(sid);
+            if (!student) return '<div class="empty-state">学员不存在</div>';
+            const records = appData.dailyRecords[sid] || {};
+            const dateKeys = Object.keys(records).sort();
+            if (!dateKeys.length) return '<div class="empty-state">暂无评分记录</div><div class="avg-display">--</div>';
+            let sum = 0, cnt = 0;
+            const sorted = [...dateKeys].sort().reverse();
+            let rows = '';
+            sorted.forEach(d => {
+                const rec = records[d];
+                const total = calcTotalScore(rec);
+                sum += total;
+                cnt++;
+                let tag = '';
+                if (rec.baseScoreType === 'sick') tag = '<span class="tag tag-sick">病假</span>';
+                else if (rec.baseScoreType === 'absent') tag = '<span class="tag tag-absent">旷班</span>';
+                else if (rec.baseScoreType === 'late') tag = '<span class="tag tag-late">迟到</span>';
+                else tag = '<span class="tag tag-normal">正常</span>';
+                rows += `<div class="date-record"><span class="date-col">📅 ${formatDateShort(d)}</span>${tag}<span class="score-col copyable-text" data-copy="${total.toFixed(2)}">${total.toFixed(2)} 分</span></div>`;
+            });
+            const avg = cnt ? sum / cnt : 0;
+            const allAvgs = [];
+            getActiveStudents().forEach(s => {
+                const recs = appData.dailyRecords[s.id] || {};
+                const keys = Object.keys(recs);
+                if (keys.length) {
+                    let ssum = 0;
+                    keys.forEach(k => ssum += calcTotalScore(recs[k]));
+                    allAvgs.push({id: s.id, name: s.name, avg: ssum / keys.length});
+                }
+            });
+            allAvgs.sort((a, b) => b.avg - a.avg);
+            const rank = allAvgs.findIndex(a => a.id === sid) + 1;
+            const avgHtml = `
+                <div class="avg-display">
+                    <div class="avg-label">📈 平均分 (共${cnt}条记录)</div>
+                    <div class="avg-score copyable-text" data-copy="${avg.toFixed(2)}">${avg.toFixed(2)}</div>
+                    <div class="rank-info">🏆 排名: 第 <span style="color:var(--yellow);">${rank}</span> 名 / 共 ${allAvgs.length} 人</div>
+                    <div style="margin-top:8px;"><span class="copyable-text" data-copy="${student.name}" style="color:var(--blue);font-weight:600;">👤 ${escapeHtml(student.name)} (点击复制姓名)</span></div>
+                </div>`;
+            return rows + avgHtml;
+        }
+
+        function attachOverviewEvents() {
+            document.querySelectorAll('#overviewTabs .student-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('#overviewTabs .student-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById('overviewDataContainer').innerHTML = renderOverviewStudentData(tab.dataset.studentId);
+                    attachCopyListeners();
+                });
+            });
+            attachCopyListeners();
+        }
+
+        // ---------- INIT ----------
+        function init() {
+            loadData();
+            renderMainContent();
+            window.addEventListener('popstate', () => {
+                if (document.getElementById('detailOverlay').style.display === 'block') closeDetailOverlay();
+            });
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
