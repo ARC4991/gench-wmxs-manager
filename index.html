@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.4/dist/index.js">
     </script>
     <style>
-        /* ===== Atom One Dark 主题色彩变量 ===== */
         :root {
             --bg: #282c34;
             --panel-bg: #21252b;
@@ -47,7 +46,6 @@
             user-select: none;
         }
 
-        /* 输入控件允许选择文本，便于编辑 */
         input,
         select,
         textarea {
@@ -67,7 +65,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== 顶部学院名称栏 ===== */
         .app-header {
             background: var(--panel-bg);
             border-bottom: 2px solid var(--border);
@@ -84,7 +81,6 @@
             font-weight: 700;
             color: var(--text-bright);
             letter-spacing: 0.04em;
-            margin: 0;
         }
 
         .app-header .subtitle {
@@ -94,7 +90,6 @@
             margin-top: 2px;
         }
 
-        /* ===== 主内容区 ===== */
         .main-content {
             padding: 12px 14px;
             max-width: 600px;
@@ -113,7 +108,6 @@
             }
         }
 
-        /* ===== 底部导航栏 ===== */
         .tab-bar {
             position: fixed;
             bottom: 0;
@@ -146,14 +140,14 @@
             position: relative;
         }
 
-        .tab-btn .tab-icon {
-            font-size: 1.4rem;
-            transition: transform var(--transition);
-        }
-
         .tab-btn.active {
             color: var(--blue);
             font-weight: 700;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.4rem;
+            transition: transform var(--transition);
         }
 
         .tab-btn.active .tab-icon {
@@ -171,7 +165,6 @@
             border-radius: 0 0 3px 3px;
         }
 
-        /* ===== 学员卡片 ===== */
         .student-card {
             background: var(--panel-bg);
             border: 1px solid var(--border);
@@ -233,7 +226,6 @@
             flex-wrap: wrap;
         }
 
-        /* ===== 状态胶囊 ===== */
         .capsule {
             display: inline-block;
             padding: 5px 12px;
@@ -257,7 +249,6 @@
             border: 1px solid rgba(224, 108, 117, 0.4);
         }
 
-        /* ===== 通用按钮 ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -284,10 +275,6 @@
         .btn-primary {
             background: var(--blue);
             color: #1a1d23;
-        }
-
-        .btn-primary:active {
-            background: #4d9fde;
         }
 
         .btn-secondary {
@@ -321,7 +308,6 @@
             font-weight: 500;
         }
 
-        /* 评分项切换按钮专用样式 */
         .score-toggle {
             display: flex;
             gap: 0;
@@ -329,6 +315,7 @@
             border-radius: 6px;
             overflow: hidden;
         }
+
         .score-toggle .toggle-btn {
             flex: 1;
             padding: 8px 4px;
@@ -343,13 +330,13 @@
             min-height: 36px;
             outline: none;
         }
+
         .score-toggle .toggle-btn.active {
             background: var(--blue);
             color: #1a1d23;
             font-weight: 700;
         }
 
-        /* ===== 可复制文本样式 ===== */
         .copyable-text {
             cursor: pointer;
             transition: all 0.15s;
@@ -361,7 +348,6 @@
             border-bottom-color: var(--blue);
         }
 
-        /* ===== 表单 ===== */
         .form-group {
             margin-bottom: 12px;
         }
@@ -372,7 +358,6 @@
             font-weight: 600;
             color: var(--text-bright);
             margin-bottom: 4px;
-            letter-spacing: 0.03em;
         }
 
         .form-input {
@@ -418,7 +403,6 @@
             min-width: 100px;
         }
 
-        /* ===== 详情页浮层 ===== */
         .overlay {
             position: fixed;
             top: 0;
@@ -469,7 +453,6 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: all var(--transition);
         }
 
         .overlay-header .back-btn:active {
@@ -492,7 +475,6 @@
             margin: 0 auto;
         }
 
-        /* ===== 日期导航器 ===== */
         .date-nav {
             display: flex;
             align-items: center;
@@ -511,7 +493,6 @@
             color: var(--text-bright);
             min-width: 110px;
             text-align: center;
-            letter-spacing: 0.03em;
         }
 
         .date-nav .nav-btn {
@@ -526,7 +507,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all var(--transition);
         }
 
         .date-nav .nav-btn:active {
@@ -535,7 +515,6 @@
             transform: scale(0.9);
         }
 
-        /* ===== 评分网格 ===== */
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -562,7 +541,6 @@
             font-weight: 500;
         }
 
-        /* ===== 区块标题 ===== */
         .section-title {
             font-size: var(--font-lg);
             font-weight: 700;
@@ -573,7 +551,6 @@
             letter-spacing: 0.03em;
         }
 
-        /* ===== 学员列表项 ===== */
         .student-list-item {
             background: var(--panel-bg);
             border: 1px solid var(--border);
@@ -624,7 +601,6 @@
             white-space: nowrap;
         }
 
-        /* ===== 数据总览页标签栏 ===== */
         .overview-student-tabs {
             display: flex;
             gap: 6px;
@@ -632,7 +608,6 @@
             padding: 4px 0 10px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            flex-wrap: nowrap;
         }
 
         .overview-student-tabs::-webkit-scrollbar {
@@ -649,7 +624,6 @@
             font-size: var(--font-sm);
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition);
             white-space: nowrap;
             min-height: 38px;
             display: flex;
@@ -662,11 +636,12 @@
             border-color: var(--blue);
             font-weight: 700;
         }
-        /* 重修学员标签红色 */
+
         .overview-student-tabs .student-tab.retake {
             border-color: var(--red);
             color: var(--red);
         }
+
         .overview-student-tabs .student-tab.retake.active {
             background: var(--red);
             color: #fff;
@@ -753,7 +728,6 @@
             color: var(--blue);
         }
 
-        /* ===== Toast 提示 ===== */
         .toast {
             position: fixed;
             top: 20px;
@@ -803,7 +777,10 @@
             }
         }
 
-        /* ===== 响应式优化 ===== */
+        .absent-record.hidden {
+            display: none;
+        }
+
         @media (max-width: 380px) {
             .score-grid {
                 grid-template-columns: 1fr;
@@ -813,36 +790,41 @@
 </head>
 <body>
 
-    <!-- 顶部学院名称 -->
     <header class="app-header">
         <h1>信息技术学院</h1>
         <div class="subtitle">学员评分管理系统</div>
     </header>
 
-    <!-- 主内容区域，动态渲染 -->
     <div class="main-content" id="mainContent"></div>
 
-    <!-- 底部导航栏 -->
     <nav class="tab-bar" id="tabBar">
         <button class="tab-btn active" data-tab="scoring"><span class="tab-icon">📋</span> 学员评分</button>
         <button class="tab-btn" data-tab="manage"><span class="tab-icon">👥</span> 学员管理</button>
         <button class="tab-btn" data-tab="overview"><span class="tab-icon">📊</span> 数据总览</button>
     </nav>
 
-    <!-- 详情浮层（评分详情页） -->
     <div class="overlay" id="detailOverlay" style="display: none;"></div>
 
-    <!-- Toast 消息容器 -->
     <div id="toastContainer"></div>
 
     <script>
         (function() {
-            // ==================== 数据存储 ====================
-            const STORAGE_KEY = 'it_college_score_v4'; // 本地存储键名，不可更换以保证兼容性
+            // 存储键名，不可更改以保证兼容性
+            const STORAGE_KEY = 'it_college_score_v4';
             let appData = {
-                students: [], // 学员数组
-                dailyRecords: {} // { studentId: { 'YYYY-MM-DD': {...} } }
+                students: [],
+                dailyRecords: {}
             };
+
+            /** 格式化手机号为 3-4-4 分隔 */
+            function formatPhone(phone) {
+                if (!phone) return '';
+                const cleaned = phone.replace(/\s/g, ''); // 移除可能已有的空格
+                if (cleaned.length === 11) {
+                    return cleaned.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3');
+                }
+                return phone; // 非标准长度原样返回
+            }
 
             /** 从 localStorage 加载数据 */
             function loadData() {
@@ -853,12 +835,11 @@
                         appData.students = parsed.students || [];
                         appData.dailyRecords = parsed.dailyRecords || {};
                     } else {
-                        // 首次使用生成演示数据
-                        //initDemoData();
+                        initDemoData();
                         saveData();
                     }
                 } catch (e) {
-                    initDemoData();
+                    //initDemoData();
                     saveData();
                 }
             }
@@ -872,21 +853,68 @@
                 }
             }
 
-            /** 初始化演示数据 */
+            /** 导出数据到剪贴板 */
+            function exportToClipboard() {
+                try {
+                    const jsonStr = JSON.stringify(appData, null, 2);
+                    copyToClipboard(jsonStr);
+                    showToast('数据已复制到剪贴板，可粘贴备份', 'success');
+                } catch (e) {
+                    showToast('导出失败', 'error');
+                }
+            }
+
+            /** 从剪贴板导入并覆盖数据 */
+            async function importFromClipboard() {
+                try {
+                    let text = '';
+                    if (navigator.clipboard && navigator.clipboard.readText) {
+                        text = await navigator.clipboard.readText();
+                    } else {
+                        // fallback: 使用 textarea 提示手动粘贴，保持交互一致性
+                        showToast('当前浏览器不支持读取剪贴板，请手动粘贴 JSON 数据', 'error');
+                        const manualInput = prompt('请粘贴 JSON 数据以覆盖导入：');
+                        if (!manualInput) return;
+                        text = manualInput;
+                    }
+                    if (!text || text.trim() === '') {
+                        showToast('剪贴板为空', 'error');
+                        return;
+                    }
+                    const data = JSON.parse(text);
+                    if (!data.students || !data.dailyRecords) {
+                        throw new Error('数据格式不正确，需要包含 students 和 dailyRecords');
+                    }
+                    if (!confirm('导入将覆盖当前所有数据，确定继续吗？')) return;
+                    appData = data;
+                    saveData();
+                    showToast('数据导入成功，页面即将刷新', 'success');
+                    setTimeout(() => {
+                        renderMainContent();
+                    }, 500);
+                } catch (e) {
+                    showToast('导入失败：' + e.message, 'error');
+                }
+            }
+
             function initDemoData() {
                 const today = getTodayStr();
                 const students = [
-                    { id: '2424001', name: '张三', pinyin: 'Zhāng Sān', class: '计算机科学1班', area: 'A区-301', phone: '13800001001', isRetake: false, noteSubmitDate: null, summarySubmitDate: null },
-                    { id: '2424002', name: '李四', pinyin: 'Lǐ Sì', class: '计算机科学1班', area: 'B区-205', phone: '13800001002', isRetake: false, noteSubmitDate: '2026-05-05', summarySubmitDate: null },
-                    { id: '2424003', name: '王五', pinyin: 'Wáng Wǔ', class: '计算机科学2班', area: 'C区-118', phone: '13800001003', isRetake: false, noteSubmitDate: '2026-05-03', summarySubmitDate: '2026-05-10' },
-                    { id: '2424004', name: '赵六', pinyin: 'Zhào Liù', class: '计算机科学2班', area: 'A区-302', phone: '13800001004', isRetake: true, noteSubmitDate: null, summarySubmitDate: null },
+                    { id: '2424001', name: '张三', pinyin: 'Zhāng Sān', class: '计算机科学1班', area: 'A区-301',
+                        phone: '13800001001', isRetake: false, noteSubmitDate: null, summarySubmitDate: null },
+                    { id: '2424002', name: '李四', pinyin: 'Lǐ Sì', class: '计算机科学1班', area: 'B区-205',
+                        phone: '13800001002', isRetake: false, noteSubmitDate: '2026-05-05', summarySubmitDate: null },
+                    { id: '2424003', name: '王五', pinyin: 'Wáng Wǔ', class: '计算机科学2班', area: 'C区-118',
+                        phone: '13800001003', isRetake: false, noteSubmitDate: '2026-05-03',
+                    summarySubmitDate: '2026-05-10' },
+                    { id: '2424004', name: '赵六', pinyin: 'Zhào Liù', class: '计算机科学2班', area: 'A区-302',
+                        phone: '13800001004', isRetake: true, noteSubmitDate: null, summarySubmitDate: null },
                 ];
                 const dailyRecords = {};
                 const ids = ['2424001', '2424002', '2424003'];
                 const start = new Date(2026, 4, 1);
-                // 生成近期随机评分数据
                 for (let d = new Date(start); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                    if (d.getDay() === 0 || d.getDay() === 6) continue; // 跳过周末
+                    if (d.getDay() === 0 || d.getDay() === 6) continue;
                     const ds = formatDate(d);
                     ids.forEach(sid => {
                         if (!dailyRecords[sid]) dailyRecords[sid] = {};
@@ -907,7 +935,9 @@
                                 extraScore: 0,
                                 extraNote: ''
                             },
-                            blackboardLevel: ['none', 'quarter', 'half', 'lessThanQuarter', 'moreThanHalf', 'veryClean'][Math.floor(Math.random() * 6)],
+                            blackboardLevel: ['none', 'quarter', 'half', 'lessThanQuarter', 'moreThanHalf',
+                                'veryClean'
+                            ][Math.floor(Math.random() * 6)],
                         };
                     });
                 }
@@ -915,36 +945,28 @@
                 appData.dailyRecords = dailyRecords;
             }
 
-            /** 格式化日期为 YYYY-MM-DD */
             function formatDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
-            /** 解析日期字符串为 Date 对象 */
             function parseDate(str) { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); }
 
-            /** 格式化日期为 “月/日” 短格式 */
             function formatDateShort(str) { const [, m, d] = str.split('-'); return `${parseInt(m)}/${parseInt(d)}`; }
 
-            /** 获取今天日期字符串 */
             function getTodayStr() { return formatDate(new Date()); }
 
-            /** 获取基础分 */
             function getBaseScore(type) { return { normal: 80, sick: 70, absent: 60, late: 75 }[type] || 80; }
 
-            /** 计算总分，上限100 */
             function calcTotalScore(record) {
                 if (!record) return 0;
                 const s = record.scores || {};
-                let total = getBaseScore(record.baseScoreType) + (s.blackboardGroove || 0) + (s.desk || 0) + (s.drawerClean || 0) + (s.floorClean || 0) + (s.blackboard || 0) + (s.extraScore || 0);
+                let total = getBaseScore(record.baseScoreType) + (s.blackboardGroove || 0) + (s.desk || 0) + (s.drawerClean ||
+                    0) + (s.floorClean || 0) + (s.blackboard || 0) + (s.extraScore || 0);
                 return Math.min(total, 100);
             }
 
-            /** 根据学号查找学员 */
             function getStudentById(id) { return appData.students.find(s => s.id === id); }
 
-            /** 获取所有非重修学员 */
             function getActiveStudents() { return appData.students.filter(s => !s.isRetake); }
 
-            /** 使用 pinyin-pro 库生成带声调的拼音 */
             function getPinyin(name) {
                 if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
                     try {
@@ -955,7 +977,6 @@
                 return name;
             }
 
-            /** 显示 Toast 消息 */
             function showToast(msg, type = '') {
                 const container = document.getElementById('toastContainer');
                 const t = document.createElement('div');
@@ -965,10 +986,10 @@
                 setTimeout(() => { if (t.parentNode) t.remove(); }, 2600);
             }
 
-            /** 复制文本到剪贴板 */
             function copyToClipboard(text) {
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text, 'success')).catch(() => fallbackCopy(text));
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text, 'success')).catch(() =>
+                        fallbackCopy(text));
                 } else {
                     fallbackCopy(text);
                 }
@@ -982,15 +1003,14 @@
                 document.body.appendChild(ta);
                 ta.select();
                 try { document.execCommand('copy');
-                    showToast('已复制: ' + text, 'success'); } catch (e) { showToast('复制失败', 'error'); }
+                    showToast('已复制', 'success'); } catch (e) { showToast('复制失败', 'error'); }
                 document.body.removeChild(ta);
             }
 
-            /** HTML 转义 */
             function escapeHtml(s) { const d = document.createElement('div');
                 d.textContent = s || ''; return d.innerHTML; }
 
-            // ==================== 页面切换 ====================
+            // ========== 页面切换 ==========
             let currentTab = 'scoring';
             document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
@@ -1013,7 +1033,7 @@
                 attachOverviewEvents();
             }
 
-            // ==================== 学员评分页面 ====================
+            // ========== 学员评分页面 ==========
             function renderScoringPage() {
                 const active = getActiveStudents();
                 if (!active.length) return `<div class="empty-state">📭 暂无学员</div>`;
@@ -1043,7 +1063,7 @@
                 );
             }
 
-            // ==================== 详情浮层 ====================
+            // ========== 详情浮层 ==========
             function openDetailOverlay(sid, dateStr) {
                 const overlay = document.getElementById('detailOverlay');
                 overlay.style.display = 'block';
@@ -1074,7 +1094,6 @@
                 const dateDisplay = formatDateShort(dateStr);
                 const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][parseDate(dateStr).getDay()];
 
-                // 黑版等第选项
                 const bbOptions = [
                     { value: 'none', label: '未清洁/残留痕迹', score: 0 },
                     { value: 'quarter', label: '1/4 清洁', score: 2 },
@@ -1083,21 +1102,18 @@
                     { value: 'moreThanHalf', label: '多于1/2 清洁', score: 7 },
                     { value: 'veryClean', label: '非常干净', score: 8 },
                 ];
-                // 出勤状态选项（“病假”已统一为“请假”）
                 const baseOptions = [
                     { value: 'normal', label: '正常 (80分)' },
                     { value: 'sick', label: '请假 (70分)' },
                     { value: 'late', label: '迟到 (75分)' },
                     { value: 'absent', label: '旷班 (60分)' },
                 ];
-                // 客观评分项配置
                 const scoreFields = [
                     { id: 'blackboardGroove', label: '黑版槽', full: 4 },
                     { id: 'desk', label: '桌椅', full: 2 },
                     { id: 'drawerClean', label: '抽屉清洁', full: 3 },
                     { id: 'floorClean', label: '地面清洁', full: 3 },
                 ];
-                // 生成按钮切换的评分项 HTML
                 const scoreToggles = scoreFields.map(f => {
                     const currentVal = scores[f.id] || 0;
                     const isFull = currentVal >= f.full;
@@ -1123,7 +1139,6 @@
                         <button class="nav-btn" id="btnNextDay">▶</button>
                     </div>
                     <div style="text-align:center;font-size:var(--font-xs);color:var(--comment);margin-bottom:12px;">${dateStr} (周${dayOfWeek})</div>
-                    <!-- 学员基本信息卡片 -->
                     <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <span class="copyable-text" data-copy="${student.name}" style="font-weight:700;font-size:var(--font-lg);color:var(--text-bright);">${escapeHtml(student.name)}</span>
@@ -1138,10 +1153,9 @@
                             <span class="copyable-text" data-copy="${student.area}">责任区: ${escapeHtml(student.area)}</span>
                         </div>
                         <div style="font-size:var(--font-xs);color:var(--comment);">
-                            <span class="copyable-text" data-copy="${student.phone}">手机: ${escapeHtml(student.phone)}</span>
+                            <span class="copyable-text" data-copy="${student.phone}">手机: ${formatPhone(student.phone)}</span>
                         </div>
                     </div>
-                    <!-- 状态胶囊 -->
                     <div class="card-status-row" style="margin-bottom:14px;">
                         <span class="capsule ${checkedIn ? 'capsule-success' : 'capsule-danger'}">签到: ${checkedIn ? '✓ 已达成' : '✗ 未达成'}</span>
                         <span class="capsule ${noteDone ? 'capsule-success' : 'capsule-danger'}">动员笔记: ${noteDone ? '✓ 已达成' : '✗ 未达成'}</span>
@@ -1236,7 +1250,6 @@
                 const bbMap = { none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8 };
                 rec.blackboardLevel = overlay.querySelector('#selectBlackboardLevel')?.value || 'none';
                 rec.scores.blackboard = bbMap[rec.blackboardLevel] || 0;
-                // 按钮切换的值读取
                 document.querySelectorAll('.score-toggle').forEach(toggle => {
                     const field = toggle.dataset.field;
                     const full = parseFloat(toggle.dataset.full);
@@ -1275,7 +1288,6 @@
                     el.addEventListener('change', updateTotal);
                     el.addEventListener('input', updateTotal);
                 });
-                // 按钮切换事件
                 document.querySelectorAll('.score-toggle .toggle-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const toggle = this.parentElement;
@@ -1294,7 +1306,7 @@
                 });
             }
 
-            // ==================== 学员管理页面 ====================
+            // ========== 学员管理页面 ==========
             function renderManagePage() {
                 let html = `
                 <div class="section-title">📥 导入学员</div>
@@ -1306,7 +1318,11 @@
                     <button class="btn btn-primary" style="width:100%;" id="btnImport">➕ 导入学员</button>
                 </div>
                 <div class="section-title">👥 学员列表</div>
-                <div style="margin-bottom:10px;"><button class="btn btn-danger btn-sm" id="btnClearAll">🗑️ 清空所有学员</button></div>
+                <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+                    <button class="btn btn-sm btn-secondary" id="btnExport">📤 导出数据</button>
+                    <button class="btn btn-sm btn-secondary" id="btnImportData">📥 导入覆盖</button>
+                    <button class="btn btn-sm btn-danger" id="btnClearAll">🗑️ 清空学员</button>
+                </div>
                 <div id="studentListContainer">`;
                 if (!appData.students.length) html += `<div class="empty-state">📭 暂无学员</div>`;
                 else appData.students.forEach(s => {
@@ -1315,7 +1331,7 @@
                         <div class="info">
                             <div class="name">${escapeHtml(s.name)} ${s.isRetake ? '<span class="badge-retake">重修</span>' : '<span class="badge-active">在读</span>'}</div>
                             <div class="detail">学号: ${escapeHtml(s.id)} | ${escapeHtml(s.class)} | ${escapeHtml(s.area)}</div>
-                            <div class="detail">📱 ${escapeHtml(s.phone)} | 🔤 ${escapeHtml(s.pinyin)}</div>
+                            <div class="detail">📱 ${formatPhone(s.phone)} | 🔤 ${escapeHtml(s.pinyin)}</div>
                         </div>
                         <div class="actions">
                             <button class="btn btn-xs btn-secondary btn-edit-student" data-student-id="${s.id}">✏️ 编辑</button>
@@ -1355,10 +1371,11 @@
                     const area = document.getElementById('inputArea')?.value.trim();
                     if (!name || !id || !cls || !phone || !area) return showToast('请填写所有字段', 'error');
                     if (appData.students.find(s => s.id === id)) return showToast('学号已存在', 'error');
-                    if (appData.students.find(s => s.phone === phone)) return showToast('手机号已存在', 'error');
+                    if (appData.students.find(s => s.phone === phone.replace(/\s/g, ''))) return showToast('手机号已存在',
+                        'error');
                     if (appData.students.find(s => s.area === area)) return showToast('责任区已存在', 'error');
-                    appData.students.push({ id, name, pinyin: pinyin || getPinyin(name), class: cls, area, phone,
-                        isRetake: false, noteSubmitDate: null, summarySubmitDate: null });
+                    appData.students.push({ id, name, pinyin: pinyin || getPinyin(name), class: cls, area, phone: phone.replace(
+                            /\s/g, ''), isRetake: false, noteSubmitDate: null, summarySubmitDate: null });
                     saveData();
                     showToast(`学员 ${name} 导入成功`, 'success');
                     document.getElementById('inputName').value = '';
@@ -1366,6 +1383,10 @@
                     document.getElementById('inputPhone').value = '';
                     renderMainContent();
                 });
+
+                document.getElementById('btnExport')?.addEventListener('click', exportToClipboard);
+                document.getElementById('btnImportData')?.addEventListener('click', importFromClipboard);
+
                 document.querySelectorAll('.btn-edit-student').forEach(b => b.addEventListener('click', () =>
                     openEditModal(b.dataset.studentId)));
                 document.querySelectorAll('.btn-toggle-retake').forEach(b => b.addEventListener('click', () => {
@@ -1409,7 +1430,7 @@
                     s.pinyin = getPinyin(s.name);
                     s.id = newId || s.id;
                     s.class = document.getElementById('editClass')?.value.trim() || s.class;
-                    s.phone = document.getElementById('editPhone')?.value.trim() || s.phone;
+                    s.phone = (document.getElementById('editPhone')?.value.trim() || s.phone).replace(/\s/g, '');
                     s.area = document.getElementById('editArea')?.value.trim() || s.area;
                     if (newId && newId !== sid) {
                         if (appData.dailyRecords[sid]) { appData.dailyRecords[newId] = appData.dailyRecords[sid];
@@ -1441,9 +1462,9 @@
                 document.getElementById('editModal').style.display = 'flex';
             }
 
-            // ==================== 数据总览页面 ====================
+            // ========== 数据总览页面 ==========
             function renderOverviewPage() {
-                const allStudents = appData.students; // 包含重修学员，但按钮颜色区分
+                const allStudents = appData.students;
                 if (!allStudents.length) return `<div class="empty-state">📊 暂无学员</div>`;
                 const defaultId = allStudents[0].id;
                 let html = `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
@@ -1469,14 +1490,13 @@
                         <div class="rank-info">🏆 排名: --</div>
                         <div style="margin-top:8px;font-size:var(--font-xs);color:var(--comment);">
                             <span class="copyable-text" data-copy="${student.name}">👤 ${escapeHtml(student.name)} (点击复制)</span><br>
-                            班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${escapeHtml(student.phone)}
+                            班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${formatPhone(student.phone)}
                         </div>
                     </div>`;
                 let sum = 0,
                     cnt = 0;
                 const sorted = [...dateKeys].sort().reverse();
                 let rows = '';
-                // 统计缺勤天数
                 let absentCount = 0;
                 let sickCount = 0;
                 sorted.forEach(d => {
@@ -1489,7 +1509,6 @@
                     else if (rec.baseScoreType === 'absent') tag = '<span class="tag tag-absent">旷班</span>';
                     else if (rec.baseScoreType === 'late') tag = '<span class="tag tag-late">迟到</span>';
                     else tag = '<span class="tag tag-normal">正常</span>';
-                    // 缺勤记录默认隐藏，通过 CSS 类控制
                     const isAbsent = (rec.baseScoreType === 'absent' || rec.baseScoreType === 'sick');
                     const rowClass = isAbsent ? 'absent-record hidden' : '';
                     rows +=
@@ -1517,7 +1536,7 @@
                     <div class="rank-info">🏆 排名: 第 <span style="color:var(--yellow);">${rank}</span> 名 / 共 ${allAvgs.length} 人</div>
                     <div style="margin-top:8px;font-size:var(--font-xs);color:var(--comment);">
                         <span class="copyable-text" data-copy="${student.name}">👤 ${escapeHtml(student.name)} (点击复制)</span><br>
-                        班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${escapeHtml(student.phone)}
+                        班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${formatPhone(student.phone)}
                     </div>
                     <div style="margin-top:6px;">
                         <button class="btn btn-xs btn-outline" id="btnToggleAbsent">👁️ 显示缺勤记录 (请假${sickCount}/旷班${absentCount})</button>
@@ -1531,7 +1550,6 @@
                     tab.addEventListener('click', () => {
                         const sid = tab.dataset.studentId;
                         const student = getStudentById(sid);
-                        // 如果学员是重修状态，点击提示
                         if (student && student.isRetake) {
                             showToast('该学员已被标记为重修', 'error');
                         }
@@ -1540,11 +1558,10 @@
                         tab.classList.add('active');
                         document.getElementById('overviewDataContainer').innerHTML =
                             renderOverviewStudentData(sid);
-                        attachOverviewEvents(); // 重新绑定新渲染的元素事件
+                        attachOverviewEvents();
                         attachCopyListeners();
                     });
                 });
-                // 切换缺勤记录显示/隐藏按钮
                 const toggleBtn = document.getElementById('btnToggleAbsent');
                 if (toggleBtn) {
                     toggleBtn.addEventListener('click', function() {
@@ -1561,12 +1578,7 @@
                 attachCopyListeners();
             }
 
-            // 添加 hidden 类的样式
-            const styleSheet = document.createElement("style");
-            styleSheet.textContent = `.absent-record.hidden { display: none; }`;
-            document.head.appendChild(styleSheet);
-
-            // ==================== 初始化 ====================
+            // ========== 初始化 ==========
             function init() {
                 loadData();
                 renderMainContent();
