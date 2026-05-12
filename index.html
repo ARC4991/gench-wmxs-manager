@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>信息技术学院 - 学员评分系统</title>
+    <!-- 引入拼音转换库，用于自动生成姓名拼音 -->
     <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.4/dist/index.js">
     </script>
     <style>
+        /* ===== Atom One Dark 主题色彩变量 ===== */
         :root {
             --bg: #282c34;
             --panel-bg: #21252b;
@@ -45,7 +47,10 @@
             user-select: none;
         }
 
-        input, select, textarea {
+        /* 输入控件允许选择文本，便于编辑 */
+        input,
+        select,
+        textarea {
             -webkit-user-select: text;
             user-select: text;
         }
@@ -62,6 +67,7 @@
             overflow-x: hidden;
         }
 
+        /* ===== 顶部学院名称栏 ===== */
         .app-header {
             background: var(--panel-bg);
             border-bottom: 2px solid var(--border);
@@ -78,6 +84,7 @@
             font-weight: 700;
             color: var(--text-bright);
             letter-spacing: 0.04em;
+            margin: 0;
         }
 
         .app-header .subtitle {
@@ -87,6 +94,7 @@
             margin-top: 2px;
         }
 
+        /* ===== 主内容区 ===== */
         .main-content {
             padding: 12px 14px;
             max-width: 600px;
@@ -105,6 +113,7 @@
             }
         }
 
+        /* ===== 底部导航栏 ===== */
         .tab-bar {
             position: fixed;
             bottom: 0;
@@ -134,6 +143,12 @@
             align-items: center;
             gap: 4px;
             outline: none;
+            position: relative;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.4rem;
+            transition: transform var(--transition);
         }
 
         .tab-btn.active {
@@ -141,8 +156,8 @@
             font-weight: 700;
         }
 
-        .tab-btn .tab-icon {
-            font-size: 1.4rem;
+        .tab-btn.active .tab-icon {
+            transform: scale(1.1);
         }
 
         .tab-btn.active::after {
@@ -156,6 +171,7 @@
             border-radius: 0 0 3px 3px;
         }
 
+        /* ===== 学员卡片 ===== */
         .student-card {
             background: var(--panel-bg);
             border: 1px solid var(--border);
@@ -190,9 +206,10 @@
         .student-card .card-id {
             font-size: var(--font-sm);
             color: var(--comment);
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
         }
 
-        .card-info {
+        .student-card .card-info {
             font-size: var(--font-xs);
             color: var(--text);
             margin-top: 4px;
@@ -201,10 +218,12 @@
             flex-wrap: wrap;
         }
 
-        .card-info span {
+        .student-card .card-info span {
             background: rgba(97, 175, 239, 0.08);
             padding: 3px 8px;
             border-radius: 4px;
+            white-space: nowrap;
+            font-size: var(--font-xs);
         }
 
         .card-status-row {
@@ -214,6 +233,7 @@
             flex-wrap: wrap;
         }
 
+        /* ===== 状态胶囊 ===== */
         .capsule {
             display: inline-block;
             padding: 5px 12px;
@@ -221,6 +241,8 @@
             font-size: var(--font-xs);
             font-weight: 600;
             letter-spacing: 0.03em;
+            white-space: nowrap;
+            transition: all var(--transition);
         }
 
         .capsule-success {
@@ -235,6 +257,7 @@
             border: 1px solid rgba(224, 108, 117, 0.4);
         }
 
+        /* ===== 通用按钮 ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -251,6 +274,7 @@
             min-height: 44px;
             white-space: nowrap;
             outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:active {
@@ -297,6 +321,35 @@
             font-weight: 500;
         }
 
+        /* 评分项切换按钮专用样式 */
+        .score-toggle {
+            display: flex;
+            gap: 0;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .score-toggle .toggle-btn {
+            flex: 1;
+            padding: 8px 4px;
+            text-align: center;
+            background: transparent;
+            color: var(--text);
+            border: none;
+            font-size: var(--font-xs);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            min-height: 36px;
+            outline: none;
+        }
+        .score-toggle .toggle-btn.active {
+            background: var(--blue);
+            color: #1a1d23;
+            font-weight: 700;
+        }
+
+        /* ===== 可复制文本样式 ===== */
         .copyable-text {
             cursor: pointer;
             transition: all 0.15s;
@@ -308,6 +361,7 @@
             border-bottom-color: var(--blue);
         }
 
+        /* ===== 表单 ===== */
         .form-group {
             margin-bottom: 12px;
         }
@@ -318,6 +372,7 @@
             font-weight: 600;
             color: var(--text-bright);
             margin-bottom: 4px;
+            letter-spacing: 0.03em;
         }
 
         .form-input {
@@ -344,6 +399,26 @@
             color: var(--comment);
         }
 
+        select.form-input {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23abb2bf'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 30px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* ===== 详情页浮层 ===== */
         .overlay {
             position: fixed;
             top: 0;
@@ -378,6 +453,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         }
 
         .overlay-header .back-btn {
@@ -393,6 +469,12 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            transition: all var(--transition);
+        }
+
+        .overlay-header .back-btn:active {
+            background: #5a6173;
+            transform: scale(0.92);
         }
 
         .overlay-header .overlay-title {
@@ -410,6 +492,7 @@
             margin: 0 auto;
         }
 
+        /* ===== 日期导航器 ===== */
         .date-nav {
             display: flex;
             align-items: center;
@@ -428,6 +511,7 @@
             color: var(--text-bright);
             min-width: 110px;
             text-align: center;
+            letter-spacing: 0.03em;
         }
 
         .date-nav .nav-btn {
@@ -442,13 +526,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all var(--transition);
         }
 
         .date-nav .nav-btn:active {
             background: var(--blue);
             color: #1a1d23;
+            transform: scale(0.9);
         }
 
+        /* ===== 评分网格 ===== */
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -472,8 +559,10 @@
         .score-item .score-label {
             font-size: var(--font-xs);
             color: var(--comment);
+            font-weight: 500;
         }
 
+        /* ===== 区块标题 ===== */
         .section-title {
             font-size: var(--font-lg);
             font-weight: 700;
@@ -481,8 +570,10 @@
             margin: 16px 0 10px;
             padding-left: 8px;
             border-left: 4px solid var(--blue);
+            letter-spacing: 0.03em;
         }
 
+        /* ===== 学员列表项 ===== */
         .student-list-item {
             background: var(--panel-bg);
             border: 1px solid var(--border);
@@ -494,6 +585,23 @@
             justify-content: space-between;
             gap: 10px;
             flex-wrap: wrap;
+            transition: all var(--transition);
+        }
+
+        .student-list-item .info {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .student-list-item .info .name {
+            font-weight: 700;
+            color: var(--text-bright);
+            font-size: var(--font-md);
+        }
+
+        .student-list-item .info .detail {
+            font-size: var(--font-xs);
+            color: var(--comment);
         }
 
         .badge-retake {
@@ -503,6 +611,7 @@
             border-radius: 4px;
             font-size: var(--font-xs);
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .badge-active {
@@ -512,14 +621,22 @@
             border-radius: 4px;
             font-size: var(--font-xs);
             font-weight: 600;
+            white-space: nowrap;
         }
 
+        /* ===== 数据总览页标签栏 ===== */
         .overview-student-tabs {
             display: flex;
             gap: 6px;
             overflow-x: auto;
             padding: 4px 0 10px;
+            -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
+            flex-wrap: nowrap;
+        }
+
+        .overview-student-tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .overview-student-tabs .student-tab {
@@ -532,6 +649,7 @@
             font-size: var(--font-sm);
             font-weight: 600;
             cursor: pointer;
+            transition: all var(--transition);
             white-space: nowrap;
             min-height: 38px;
             display: flex;
@@ -542,6 +660,17 @@
             background: var(--blue);
             color: #1a1d23;
             border-color: var(--blue);
+            font-weight: 700;
+        }
+        /* 重修学员标签红色 */
+        .overview-student-tabs .student-tab.retake {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .overview-student-tabs .student-tab.retake.active {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
         }
 
         .date-record {
@@ -553,17 +682,24 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
+            transition: all var(--transition);
         }
 
         .date-record .date-col {
             font-weight: 700;
             color: var(--text-bright);
+            font-size: var(--font-md);
+            min-width: 50px;
+            white-space: nowrap;
         }
 
         .date-record .score-col {
             font-size: var(--font-xl);
             font-weight: 700;
             color: var(--blue);
+            text-align: right;
+            min-width: 50px;
         }
 
         .tag-sick {
@@ -572,6 +708,7 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: var(--font-xs);
+            font-weight: 600;
         }
 
         .tag-absent {
@@ -580,6 +717,7 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: var(--font-xs);
+            font-weight: 600;
         }
 
         .tag-late {
@@ -588,6 +726,7 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: var(--font-xs);
+            font-weight: 600;
         }
 
         .tag-normal {
@@ -596,6 +735,7 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: var(--font-xs);
+            font-weight: 600;
         }
 
         .avg-display {
@@ -613,6 +753,7 @@
             color: var(--blue);
         }
 
+        /* ===== Toast 提示 ===== */
         .toast {
             position: fixed;
             top: 20px;
@@ -627,6 +768,8 @@
             font-weight: 600;
             z-index: 500;
             animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
         }
 
         .toast.error {
@@ -659,254 +802,228 @@
                 transform: translateX(-50%) translateY(-20px);
             }
         }
+
+        /* ===== 响应式优化 ===== */
+        @media (max-width: 380px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-<header class="app-header">
-    <h1>信息技术学院</h1>
-    <div class="subtitle">学员评分管理系统</div>
-</header>
-<div class="main-content" id="mainContent"></div>
-<nav class="tab-bar" id="tabBar">
-    <button class="tab-btn active" data-tab="scoring"><span class="tab-icon">📋</span> 学员评分</button>
-    <button class="tab-btn" data-tab="manage"><span class="tab-icon">👥</span> 学员管理</button>
-    <button class="tab-btn" data-tab="overview"><span class="tab-icon">📊</span> 数据总览</button>
-</nav>
-<div class="overlay" id="detailOverlay" style="display: none;"></div>
-<div id="toastContainer"></div>
-<script>
-    (function () {
-        const STORAGE_KEY = 'it_college_score_v4';
-        let appData = {students: [], dailyRecords: {}};
 
-        function loadData() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    appData.students = parsed.students || [];
-                    appData.dailyRecords = parsed.dailyRecords || {};
-                } else {
-                    //initDemoData();
+    <!-- 顶部学院名称 -->
+    <header class="app-header">
+        <h1>信息技术学院</h1>
+        <div class="subtitle">学员评分管理系统</div>
+    </header>
+
+    <!-- 主内容区域，动态渲染 -->
+    <div class="main-content" id="mainContent"></div>
+
+    <!-- 底部导航栏 -->
+    <nav class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-tab="scoring"><span class="tab-icon">📋</span> 学员评分</button>
+        <button class="tab-btn" data-tab="manage"><span class="tab-icon">👥</span> 学员管理</button>
+        <button class="tab-btn" data-tab="overview"><span class="tab-icon">📊</span> 数据总览</button>
+    </nav>
+
+    <!-- 详情浮层（评分详情页） -->
+    <div class="overlay" id="detailOverlay" style="display: none;"></div>
+
+    <!-- Toast 消息容器 -->
+    <div id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ==================== 数据存储 ====================
+            const STORAGE_KEY = 'it_college_score_v4'; // 本地存储键名，不可更换以保证兼容性
+            let appData = {
+                students: [], // 学员数组
+                dailyRecords: {} // { studentId: { 'YYYY-MM-DD': {...} } }
+            };
+
+            /** 从 localStorage 加载数据 */
+            function loadData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        appData.students = parsed.students || [];
+                        appData.dailyRecords = parsed.dailyRecords || {};
+                    } else {
+                        initDemoData(); // 首次使用生成演示数据
+                        saveData();
+                    }
+                } catch (e) {
+                    initDemoData();
                     saveData();
                 }
-            } catch (e) {
-                initDemoData();
-                saveData();
             }
-        }
 
-        function saveData() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-            } catch (e) {
-                showToast('存储空间不足', 'error');
-            }
-        }
-
-        function initDemoData() {
-            const today = getTodayStr();
-            const students = [
-                {
-                    id: '2424001',
-                    name: '张三',
-                    pinyin: 'Zhāng Sān',
-                    class: '计算机科学1班',
-                    area: 'A区-301',
-                    phone: '13800001001',
-                    isRetake: false,
-                    noteSubmitDate: null,
-                    summarySubmitDate: null
-                },
-                {
-                    id: '2424002',
-                    name: '李四',
-                    pinyin: 'Lǐ Sì',
-                    class: '计算机科学1班',
-                    area: 'B区-205',
-                    phone: '13800001002',
-                    isRetake: false,
-                    noteSubmitDate: '2026-05-05',
-                    summarySubmitDate: null
-                },
-                {
-                    id: '2424003',
-                    name: '王五',
-                    pinyin: 'Wáng Wǔ',
-                    class: '计算机科学2班',
-                    area: 'C区-118',
-                    phone: '13800001003',
-                    isRetake: false,
-                    noteSubmitDate: '2026-05-03',
-                    summarySubmitDate: '2026-05-10'
-                },
-                {
-                    id: '2424004',
-                    name: '赵六',
-                    pinyin: 'Zhào Liù',
-                    class: '计算机科学2班',
-                    area: 'A区-302',
-                    phone: '13800001004',
-                    isRetake: true,
-                    noteSubmitDate: null,
-                    summarySubmitDate: null
-                },
-            ];
-            const dailyRecords = {};
-            const ids = ['2424001', '2424002', '2424003'];
-            const start = new Date(2026, 4, 1);
-            for (let d = new Date(start); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const ds = formatDate(d);
-                ids.forEach(sid => {
-                    if (!dailyRecords[sid]) dailyRecords[sid] = {};
-                    const rand = Math.random();
-                    let bt = 'normal';
-                    if (rand < 0.06) bt = 'absent';
-                    else if (rand < 0.14) bt = 'sick';
-                    else if (rand < 0.22) bt = 'late';
-                    dailyRecords[sid][ds] = {
-                        checkedIn: (bt === 'normal' || bt === 'late'),
-                        baseScoreType: bt,
-                        scores: {
-                            blackboardGroove: Math.random() > 0.5 ? 4 : 0,
-                            desk: Math.random() > 0.5 ? 2 : 0,
-                            drawerClean: Math.random() > 0.5 ? 3 : 0,
-                            floorClean: Math.random() > 0.5 ? 3 : 0,
-                            blackboard: [0, 2, 4, 6, 7, 8][Math.floor(Math.random() * 6)],
-                            extraScore: 0,
-                            extraNote: ''
-                        },
-                        blackboardLevel: ['none', 'quarter', 'half', 'lessThanQuarter', 'moreThanHalf', 'veryClean'][Math.floor(Math.random() * 6)],
-                    };
-                });
-            }
-            appData.students = students;
-            appData.dailyRecords = dailyRecords;
-        }
-
-        function formatDate(d) {
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-
-        function parseDate(str) {
-            const [y, m, d] = str.split('-').map(Number);
-            return new Date(y, m - 1, d);
-        }
-
-        function formatDateShort(str) {
-            const [, m, d] = str.split('-');
-            return `${parseInt(m)}/${parseInt(d)}`;
-        }
-
-        function getTodayStr() {
-            return formatDate(new Date());
-        }
-
-        function getBaseScore(type) {
-            return {normal: 80, sick: 70, absent: 60, late: 75}[type] || 80;
-        }
-
-        function calcTotalScore(record) {
-            if (!record) return 0;
-            const s = record.scores || {};
-            let total = getBaseScore(record.baseScoreType) + (s.blackboardGroove || 0) + (s.desk || 0) + (s.drawerClean || 0) + (s.floorClean || 0) + (s.blackboard || 0) + (s.extraScore || 0);
-            return Math.min(total, 100);
-        }
-
-        function getStudentById(id) {
-            return appData.students.find(s => s.id === id);
-        }
-
-        function getActiveStudents() {
-            return appData.students.filter(s => !s.isRetake);
-        }
-
-        function getPinyin(name) {
-            if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
+            /** 保存数据到 localStorage */
+            function saveData() {
                 try {
-                    const result = pinyinPro.pinyin(name, {toneType: 'symbol', type: 'array'});
-                    if (result && result.length) return result.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
                 } catch (e) {
+                    showToast('存储空间不足', 'error');
                 }
             }
-            return name;
-        }
 
-        function showToast(msg, type = '') {
-            const container = document.getElementById('toastContainer');
-            const t = document.createElement('div');
-            t.className = `toast ${type}`;
-            t.textContent = msg;
-            container.appendChild(t);
-            setTimeout(() => {
-                if (t.parentNode) t.remove();
-            }, 2600);
-        }
-
-        function copyToClipboard(text) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text, 'success')).catch(() => fallbackCopy(text));
-            } else fallbackCopy(text);
-        }
-
-        function fallbackCopy(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-                document.execCommand('copy');
-                showToast('已复制: ' + text, 'success');
-            } catch (e) {
-                showToast('复制失败', 'error');
+            /** 初始化演示数据 */
+            function initDemoData() {
+                const today = getTodayStr();
+                const students = [
+                    { id: '2424001', name: '张三', pinyin: 'Zhāng Sān', class: '计算机科学1班', area: 'A区-301', phone: '13800001001', isRetake: false, noteSubmitDate: null, summarySubmitDate: null },
+                    { id: '2424002', name: '李四', pinyin: 'Lǐ Sì', class: '计算机科学1班', area: 'B区-205', phone: '13800001002', isRetake: false, noteSubmitDate: '2026-05-05', summarySubmitDate: null },
+                    { id: '2424003', name: '王五', pinyin: 'Wáng Wǔ', class: '计算机科学2班', area: 'C区-118', phone: '13800001003', isRetake: false, noteSubmitDate: '2026-05-03', summarySubmitDate: '2026-05-10' },
+                    { id: '2424004', name: '赵六', pinyin: 'Zhào Liù', class: '计算机科学2班', area: 'A区-302', phone: '13800001004', isRetake: true, noteSubmitDate: null, summarySubmitDate: null },
+                ];
+                const dailyRecords = {};
+                const ids = ['2424001', '2424002', '2424003'];
+                const start = new Date(2026, 4, 1);
+                // 生成近期随机评分数据
+                for (let d = new Date(start); d <= new Date(); d.setDate(d.getDate() + 1)) {
+                    if (d.getDay() === 0 || d.getDay() === 6) continue; // 跳过周末
+                    const ds = formatDate(d);
+                    ids.forEach(sid => {
+                        if (!dailyRecords[sid]) dailyRecords[sid] = {};
+                        const rand = Math.random();
+                        let bt = 'normal';
+                        if (rand < 0.06) bt = 'absent';
+                        else if (rand < 0.14) bt = 'sick';
+                        else if (rand < 0.22) bt = 'late';
+                        dailyRecords[sid][ds] = {
+                            checkedIn: (bt === 'normal' || bt === 'late'),
+                            baseScoreType: bt,
+                            scores: {
+                                blackboardGroove: Math.random() > 0.5 ? 4 : 0,
+                                desk: Math.random() > 0.5 ? 2 : 0,
+                                drawerClean: Math.random() > 0.5 ? 3 : 0,
+                                floorClean: Math.random() > 0.5 ? 3 : 0,
+                                blackboard: [0, 2, 4, 6, 7, 8][Math.floor(Math.random() * 6)],
+                                extraScore: 0,
+                                extraNote: ''
+                            },
+                            blackboardLevel: ['none', 'quarter', 'half', 'lessThanQuarter', 'moreThanHalf', 'veryClean'][Math.floor(Math.random() * 6)],
+                        };
+                    });
+                }
+                appData.students = students;
+                appData.dailyRecords = dailyRecords;
             }
-            document.body.removeChild(ta);
-        }
 
-        function escapeHtml(s) {
-            const d = document.createElement('div');
-            d.textContent = s || '';
-            return d.innerHTML;
-        }
+            /** 格式化日期为 YYYY-MM-DD */
+            function formatDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
-        // ---------- TABS ----------
-        let currentTab = 'scoring';
-        document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+            /** 解析日期字符串为 Date 对象 */
+            function parseDate(str) { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const ab = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
-            if (ab) ab.classList.add('active');
-            document.getElementById('detailOverlay').style.display = 'none';
-            renderMainContent();
-        }
+            /** 格式化日期为 “月/日” 短格式 */
+            function formatDateShort(str) { const [, m, d] = str.split('-'); return `${parseInt(m)}/${parseInt(d)}`; }
 
-        function renderMainContent() {
-            const c = document.getElementById('mainContent');
-            if (currentTab === 'scoring') c.innerHTML = renderScoringPage();
-            else if (currentTab === 'manage') c.innerHTML = renderManagePage();
-            else if (currentTab === 'overview') c.innerHTML = renderOverviewPage();
-            attachScoringEvents();
-            attachManageEvents();
-            attachOverviewEvents();
-        }
+            /** 获取今天日期字符串 */
+            function getTodayStr() { return formatDate(new Date()); }
 
-        // ---------- SCORING PAGE ----------
-        function renderScoringPage() {
-            const active = getActiveStudents();
-            if (!active.length) return `<div class="empty-state">📭 暂无学员</div>`;
-            const today = getTodayStr();
-            return active.map(s => {
-                const rec = (appData.dailyRecords[s.id] && appData.dailyRecords[s.id][today]) || null;
-                const checkedIn = rec ? rec.checkedIn : false;
-                const noteDone = s.noteSubmitDate && s.noteSubmitDate <= today;
-                const summaryDone = s.summarySubmitDate && s.summarySubmitDate <= today;
-                const total = rec ? calcTotalScore(rec) : null;
-                return `
+            /** 获取基础分 */
+            function getBaseScore(type) { return { normal: 80, sick: 70, absent: 60, late: 75 }[type] || 80; }
+
+            /** 计算总分，上限100 */
+            function calcTotalScore(record) {
+                if (!record) return 0;
+                const s = record.scores || {};
+                let total = getBaseScore(record.baseScoreType) + (s.blackboardGroove || 0) + (s.desk || 0) + (s.drawerClean || 0) + (s.floorClean || 0) + (s.blackboard || 0) + (s.extraScore || 0);
+                return Math.min(total, 100);
+            }
+
+            /** 根据学号查找学员 */
+            function getStudentById(id) { return appData.students.find(s => s.id === id); }
+
+            /** 获取所有非重修学员 */
+            function getActiveStudents() { return appData.students.filter(s => !s.isRetake); }
+
+            /** 使用 pinyin-pro 库生成带声调的拼音 */
+            function getPinyin(name) {
+                if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
+                    try {
+                        const result = pinyinPro.pinyin(name, { toneType: 'symbol', type: 'array' });
+                        if (result && result.length) return result.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    } catch (e) {}
+                }
+                return name;
+            }
+
+            /** 显示 Toast 消息 */
+            function showToast(msg, type = '') {
+                const container = document.getElementById('toastContainer');
+                const t = document.createElement('div');
+                t.className = `toast ${type}`;
+                t.textContent = msg;
+                container.appendChild(t);
+                setTimeout(() => { if (t.parentNode) t.remove(); }, 2600);
+            }
+
+            /** 复制文本到剪贴板 */
+            function copyToClipboard(text) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text, 'success')).catch(() => fallbackCopy(text));
+                } else {
+                    fallbackCopy(text);
+                }
+            }
+
+            function fallbackCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy');
+                    showToast('已复制: ' + text, 'success'); } catch (e) { showToast('复制失败', 'error'); }
+                document.body.removeChild(ta);
+            }
+
+            /** HTML 转义 */
+            function escapeHtml(s) { const d = document.createElement('div');
+                d.textContent = s || ''; return d.innerHTML; }
+
+            // ==================== 页面切换 ====================
+            let currentTab = 'scoring';
+            document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+            function switchTab(tab) {
+                currentTab = tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                const ab = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+                if (ab) ab.classList.add('active');
+                document.getElementById('detailOverlay').style.display = 'none';
+                renderMainContent();
+            }
+
+            function renderMainContent() {
+                const c = document.getElementById('mainContent');
+                if (currentTab === 'scoring') c.innerHTML = renderScoringPage();
+                else if (currentTab === 'manage') c.innerHTML = renderManagePage();
+                else if (currentTab === 'overview') c.innerHTML = renderOverviewPage();
+                attachScoringEvents();
+                attachManageEvents();
+                attachOverviewEvents();
+            }
+
+            // ==================== 学员评分页面 ====================
+            function renderScoringPage() {
+                const active = getActiveStudents();
+                if (!active.length) return `<div class="empty-state">📭 暂无学员</div>`;
+                const today = getTodayStr();
+                return active.map(s => {
+                    const rec = (appData.dailyRecords[s.id] && appData.dailyRecords[s.id][today]) || null;
+                    const checkedIn = rec ? rec.checkedIn : false;
+                    const noteDone = s.noteSubmitDate && s.noteSubmitDate <= today;
+                    const summaryDone = s.summarySubmitDate && s.summarySubmitDate <= today;
+                    const total = rec ? calcTotalScore(rec) : null;
+                    return `
                     <div class="student-card" data-student-id="${s.id}" data-action="open-detail">
                         <div class="card-row"><span class="card-name">${escapeHtml(s.name)}</span><span class="card-id">${escapeHtml(s.id)}</span></div>
                         <div class="card-info"><span>📖 ${escapeHtml(s.class)}</span><span>📍 ${escapeHtml(s.area)}</span>${total !== null ? `<span>📊 ${total}分</span>` : ''}</div>
@@ -916,78 +1033,84 @@
                             <span class="capsule ${summaryDone ? 'capsule-success' : 'capsule-danger'}">结业小结: ${summaryDone ? '✓ 已达成' : '✗ 未达成'}</span>
                         </div>
                     </div>`;
-            }).join('');
-        }
-
-        function attachScoringEvents() {
-            document.querySelectorAll('.student-card[data-action="open-detail"]').forEach(c => c.addEventListener('click', () => openDetailOverlay(c.dataset.studentId, getTodayStr())));
-        }
-
-        // ---------- DETAIL OVERLAY ----------
-        function openDetailOverlay(sid, dateStr) {
-            const overlay = document.getElementById('detailOverlay');
-            overlay.style.display = 'block';
-            overlay.dataset.studentId = sid;
-            overlay.dataset.currentDate = dateStr;
-            renderDetailContent(sid, dateStr);
-            overlay.scrollTop = 0;
-        }
-
-        function closeDetailOverlay() {
-            document.getElementById('detailOverlay').style.display = 'none';
-            renderMainContent();
-        }
-
-        function renderDetailContent(sid, dateStr) {
-            const overlay = document.getElementById('detailOverlay');
-            const student = getStudentById(sid);
-            if (!student) {
-                overlay.innerHTML = '<div class="empty-state">学员不存在</div>';
-                return;
+                }).join('');
             }
-            const record = (appData.dailyRecords[sid] && appData.dailyRecords[sid][dateStr]) || null;
-            const baseType = record ? record.baseScoreType : 'normal';
-            const checkedIn = (baseType === 'normal' || baseType === 'late');
-            const noteDone = student.noteSubmitDate && student.noteSubmitDate <= dateStr;
-            const summaryDone = student.summarySubmitDate && student.summarySubmitDate <= dateStr;
-            const scores = record ? (record.scores || {}) : {};
-            const bbLevel = record ? (record.blackboardLevel || 'none') : 'none';
-            const totalScore = record ? calcTotalScore(record) : getBaseScore('normal');
-            const baseScore = getBaseScore(baseType);
-            const dateDisplay = formatDateShort(dateStr);
-            const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][parseDate(dateStr).getDay()];
 
-            const bbOptions = [
-                {value: 'none', label: '未清洁/残留痕迹', score: 0}, {value: 'quarter', label: '1/4 清洁', score: 2},
-                {value: 'half', label: '1/2 清洁', score: 4}, {
-                    value: 'lessThanQuarter',
-                    label: '少于1/4 残留',
-                    score: 6
-                },
-                {value: 'moreThanHalf', label: '多于1/2 清洁', score: 7}, {
-                    value: 'veryClean',
-                    label: '非常干净',
-                    score: 8
-                }
-            ];
-            const baseOptions = [
-                {value: 'normal', label: '正常 (80分)'}, {value: 'sick', label: '病假 (70分)'},
-                {value: 'late', label: '迟到 (75分)'}, {value: 'absent', label: '旷班 (60分)'}
-            ];
-            const scoreFields = [
-                {id: 'blackboardGroove', label: '黑版槽', full: 4}, {id: 'desk', label: '桌椅', full: 2},
-                {id: 'drawerClean', label: '抽屉清洁', full: 3}, {id: 'floorClean', label: '地面清洁', full: 3}
-            ];
-            const scoreSelects = scoreFields.map(f => {
-                const cur = scores[f.id] || 0;
-                return `<div class="score-item"><span class="score-label">${f.label} (满分${f.full}分)</span>
-                    <select class="form-input score-binary" data-field="${f.id}" data-full="${f.full}">
-                        <option value="full" ${cur >= f.full ? 'selected' : ''}>达标 (${f.full}分)</option>
-                        <option value="zero" ${cur < f.full ? 'selected' : ''}>未达标 (0分)</option>
-                    </select></div>`;
-            }).join('');
+            function attachScoringEvents() {
+                document.querySelectorAll('.student-card[data-action="open-detail"]').forEach(c =>
+                    c.addEventListener('click', () => openDetailOverlay(c.dataset.studentId, getTodayStr()))
+                );
+            }
 
-            overlay.innerHTML = `
+            // ==================== 详情浮层 ====================
+            function openDetailOverlay(sid, dateStr) {
+                const overlay = document.getElementById('detailOverlay');
+                overlay.style.display = 'block';
+                overlay.dataset.studentId = sid;
+                overlay.dataset.currentDate = dateStr;
+                renderDetailContent(sid, dateStr);
+                overlay.scrollTop = 0;
+            }
+
+            function closeDetailOverlay() {
+                document.getElementById('detailOverlay').style.display = 'none';
+                renderMainContent();
+            }
+
+            function renderDetailContent(sid, dateStr) {
+                const overlay = document.getElementById('detailOverlay');
+                const student = getStudentById(sid);
+                if (!student) { overlay.innerHTML = '<div class="empty-state">学员不存在</div>'; return; }
+                const record = (appData.dailyRecords[sid] && appData.dailyRecords[sid][dateStr]) || null;
+                const baseType = record ? record.baseScoreType : 'normal';
+                const checkedIn = (baseType === 'normal' || baseType === 'late');
+                const noteDone = student.noteSubmitDate && student.noteSubmitDate <= dateStr;
+                const summaryDone = student.summarySubmitDate && student.summarySubmitDate <= dateStr;
+                const scores = record ? (record.scores || {}) : {};
+                const bbLevel = record ? (record.blackboardLevel || 'none') : 'none';
+                const totalScore = record ? calcTotalScore(record) : getBaseScore('normal');
+                const baseScore = getBaseScore(baseType);
+                const dateDisplay = formatDateShort(dateStr);
+                const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][parseDate(dateStr).getDay()];
+
+                // 黑版等第选项
+                const bbOptions = [
+                    { value: 'none', label: '未清洁/残留痕迹', score: 0 },
+                    { value: 'quarter', label: '1/4 清洁', score: 2 },
+                    { value: 'half', label: '1/2 清洁', score: 4 },
+                    { value: 'lessThanQuarter', label: '少于1/4 残留', score: 6 },
+                    { value: 'moreThanHalf', label: '多于1/2 清洁', score: 7 },
+                    { value: 'veryClean', label: '非常干净', score: 8 },
+                ];
+                // 出勤状态选项（“病假”已统一为“请假”）
+                const baseOptions = [
+                    { value: 'normal', label: '正常 (80分)' },
+                    { value: 'sick', label: '请假 (70分)' },
+                    { value: 'late', label: '迟到 (75分)' },
+                    { value: 'absent', label: '旷班 (60分)' },
+                ];
+                // 客观评分项配置
+                const scoreFields = [
+                    { id: 'blackboardGroove', label: '黑版槽', full: 4 },
+                    { id: 'desk', label: '桌椅', full: 2 },
+                    { id: 'drawerClean', label: '抽屉清洁', full: 3 },
+                    { id: 'floorClean', label: '地面清洁', full: 3 },
+                ];
+                // 生成按钮切换的评分项 HTML
+                const scoreToggles = scoreFields.map(f => {
+                    const currentVal = scores[f.id] || 0;
+                    const isFull = currentVal >= f.full;
+                    return `
+                    <div class="score-item">
+                        <span class="score-label">${f.label} (满分${f.full}分)</span>
+                        <div class="score-toggle" data-field="${f.id}" data-full="${f.full}">
+                            <button class="toggle-btn ${isFull ? 'active' : ''}" data-value="full">达标 (${f.full}分)</button>
+                            <button class="toggle-btn ${!isFull ? 'active' : ''}" data-value="zero">未达标 (0分)</button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                overlay.innerHTML = `
                 <div class="overlay-header">
                     <button class="back-btn" id="btnCloseDetail">←</button>
                     <span class="overlay-title">学员详情</span>
@@ -999,23 +1122,25 @@
                         <button class="nav-btn" id="btnNextDay">▶</button>
                     </div>
                     <div style="text-align:center;font-size:var(--font-xs);color:var(--comment);margin-bottom:12px;">${dateStr} (周${dayOfWeek})</div>
+                    <!-- 学员基本信息卡片 -->
                     <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <span class="copyable-text" data-copy="${student.name}" style="font-weight:700;font-size:var(--font-lg);color:var(--text-bright);">${escapeHtml(student.name)}</span>
                             <button class="btn btn-xs btn-outline" id="btnCopyIdName" data-copy="${student.id}${student.name}">📋 复制学号姓名</button>
                         </div>
                         <div style="font-size:var(--font-xs);color:var(--comment);margin-top:4px;">
-                            <span class="copyable-text" data-copy="${student.id}">学号: ${escapeHtml(student.id)}</span> |
+                            <span class="copyable-text" data-copy="${student.id}">学号: ${escapeHtml(student.id)}</span> | 
                             <span class="copyable-text" data-copy="${student.pinyin}">拼音: ${escapeHtml(student.pinyin)}</span>
                         </div>
                         <div style="font-size:var(--font-xs);color:var(--comment);">
-                            <span class="copyable-text" data-copy="${student.class}">班级: ${escapeHtml(student.class)}</span> |
+                            <span class="copyable-text" data-copy="${student.class}">班级: ${escapeHtml(student.class)}</span> | 
                             <span class="copyable-text" data-copy="${student.area}">责任区: ${escapeHtml(student.area)}</span>
                         </div>
                         <div style="font-size:var(--font-xs);color:var(--comment);">
                             <span class="copyable-text" data-copy="${student.phone}">手机: ${escapeHtml(student.phone)}</span>
                         </div>
                     </div>
+                    <!-- 状态胶囊 -->
                     <div class="card-status-row" style="margin-bottom:14px;">
                         <span class="capsule ${checkedIn ? 'capsule-success' : 'capsule-danger'}">签到: ${checkedIn ? '✓ 已达成' : '✗ 未达成'}</span>
                         <span class="capsule ${noteDone ? 'capsule-success' : 'capsule-danger'}">动员笔记: ${noteDone ? '✓ 已达成' : '✗ 未达成'}</span>
@@ -1033,10 +1158,10 @@
                     <div style="font-size:var(--font-xs);color:var(--comment);margin-bottom:8px;">当前基础分: <span style="font-weight:700;color:var(--yellow);">${baseScore}分</span></div>
                     <div class="section-title">📝 评分区</div>
                     <div class="score-grid">
-                        ${scoreSelects}
+                        ${scoreToggles}
                         <div class="score-item full-width">
                             <span class="score-label">黑版等第 (满分8分)</span>
-                            <select class="form-input" id="selectBlackboardLevel">${bbOptions.map(o => `<option value="${o.value}" ${bbLevel === o.value ? 'selected' : ''}>${o.label} (${o.score}分)</option>`).join('')}</select>
+                            <select id="selectBlackboardLevel" class="form-input">${bbOptions.map(o => `<option value="${o.value}" ${bbLevel === o.value ? 'selected' : ''}>${o.label} (${o.score}分)</option>`).join('')}</select>
                         </div>
                         <div class="score-item full-width">
                             <span class="score-label">额外加分 (0~5分)</span>
@@ -1054,121 +1179,123 @@
                     </div>
                     <button class="btn btn-primary" style="width:100%;margin-bottom:20px;" id="btnSaveDetail">💾 保存评分</button>
                 </div>`;
-            attachDetailEvents(sid, dateStr);
-            attachDetailScoreListeners();
-            attachCopyListeners();
-        }
+                attachDetailEvents(sid, dateStr);
+                attachDetailScoreListeners();
+                attachCopyListeners();
+            }
 
-        function attachDetailEvents(sid, dateStr) {
-            const overlay = document.getElementById('detailOverlay');
-            overlay.querySelector('#btnCloseDetail')?.addEventListener('click', closeDetailOverlay);
-            overlay.querySelector('#btnPrevDay')?.addEventListener('click', () => {
-                const d = parseDate(overlay.dataset.currentDate);
-                d.setDate(d.getDate() - 1);
-                overlay.dataset.currentDate = formatDate(d);
-                renderDetailContent(sid, overlay.dataset.currentDate);
-            });
-            overlay.querySelector('#btnNextDay')?.addEventListener('click', () => {
-                const d = parseDate(overlay.dataset.currentDate);
-                d.setDate(d.getDate() + 1);
-                overlay.dataset.currentDate = formatDate(d);
-                renderDetailContent(sid, overlay.dataset.currentDate);
-            });
-            overlay.querySelector('#btnSubmitNote')?.addEventListener('click', () => {
-                const s = getStudentById(sid);
-                if (s) {
-                    s.noteSubmitDate = overlay.dataset.currentDate;
-                    saveData();
-                    showToast('动员笔记已标记', 'success');
+            function attachDetailEvents(sid, dateStr) {
+                const overlay = document.getElementById('detailOverlay');
+                overlay.querySelector('#btnCloseDetail')?.addEventListener('click', closeDetailOverlay);
+                overlay.querySelector('#btnPrevDay')?.addEventListener('click', () => {
+                    const d = parseDate(overlay.dataset.currentDate);
+                    d.setDate(d.getDate() - 1);
+                    overlay.dataset.currentDate = formatDate(d);
                     renderDetailContent(sid, overlay.dataset.currentDate);
-                }
-            });
-            overlay.querySelector('#btnSubmitSummary')?.addEventListener('click', () => {
-                const s = getStudentById(sid);
-                if (s) {
-                    s.summarySubmitDate = overlay.dataset.currentDate;
-                    saveData();
-                    showToast('结业小结已标记', 'success');
+                });
+                overlay.querySelector('#btnNextDay')?.addEventListener('click', () => {
+                    const d = parseDate(overlay.dataset.currentDate);
+                    d.setDate(d.getDate() + 1);
+                    overlay.dataset.currentDate = formatDate(d);
                     renderDetailContent(sid, overlay.dataset.currentDate);
-                }
-            });
-            overlay.querySelector('#btnSaveDetail')?.addEventListener('click', () => saveDetailData(sid, overlay.dataset.currentDate));
-            overlay.querySelector('#btnCopyIdName')?.addEventListener('click', (e) => {
-                const t = e.currentTarget.dataset.copy;
-                if (t) copyToClipboard(t);
-            });
-        }
-
-        function saveDetailData(sid, dateStr) {
-            const overlay = document.getElementById('detailOverlay');
-            if (!appData.dailyRecords[sid]) appData.dailyRecords[sid] = {};
-            if (!appData.dailyRecords[sid][dateStr]) appData.dailyRecords[sid][dateStr] = {
-                checkedIn: false, baseScoreType: 'normal',
-                scores: {
-                    blackboardGroove: 0,
-                    desk: 0,
-                    drawerClean: 0,
-                    floorClean: 0,
-                    blackboard: 0,
-                    extraScore: 0,
-                    extraNote: ''
-                },
-                blackboardLevel: 'none'
-            };
-            const rec = appData.dailyRecords[sid][dateStr];
-            rec.baseScoreType = overlay.querySelector('#selectBaseType')?.value || 'normal';
-            rec.checkedIn = (rec.baseScoreType === 'normal' || rec.baseScoreType === 'late');
-            const bbMap = {none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8};
-            rec.blackboardLevel = overlay.querySelector('#selectBlackboardLevel')?.value || 'none';
-            rec.scores.blackboard = bbMap[rec.blackboardLevel] || 0;
-            document.querySelectorAll('.score-binary').forEach(sel => {
-                const field = sel.dataset.field;
-                const full = parseFloat(sel.dataset.full);
-                rec.scores[field] = sel.value === 'full' ? full : 0;
-            });
-            rec.scores.extraScore = Math.min(5, Math.max(0, parseFloat(overlay.querySelector('#scoreExtra')?.value) || 0));
-            rec.scores.extraNote = overlay.querySelector('#scoreExtraNote')?.value?.trim() || '';
-            saveData();
-            showToast('评分已保存 ✓', 'success');
-            renderDetailContent(sid, dateStr);
-        }
-
-        function attachDetailScoreListeners() {
-            const overlay = document.getElementById('detailOverlay');
-            const updateTotal = () => {
-                const baseType = overlay.querySelector('#selectBaseType')?.value || 'normal';
-                let base = getBaseScore(baseType);
-                let extra = 0;
-                document.querySelectorAll('.score-binary').forEach(sel => {
-                    if (sel.value === 'full') extra += parseFloat(sel.dataset.full);
                 });
-                const bbMap = {none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8};
-                extra += bbMap[overlay.querySelector('#selectBlackboardLevel')?.value] || 0;
-                extra += Math.min(5, parseFloat(overlay.querySelector('#scoreExtra')?.value) || 0);
-                const total = Math.min(base + extra, 100);
-                const totalEl = overlay.querySelector('#detailTotalScore');
-                if (totalEl) totalEl.textContent = total;
-                const breakdown = overlay.querySelector('div[style*="基础分"]');
-                if (breakdown) breakdown.textContent = `基础分 ${base} + 评分区 ${extra} (上限100)`;
-            };
-            overlay.querySelectorAll('#selectBaseType, .score-binary, #selectBlackboardLevel, #scoreExtra').forEach(el => {
-                el.addEventListener('change', updateTotal);
-                el.addEventListener('input', updateTotal);
-            });
-        }
-
-        function attachCopyListeners() {
-            document.querySelectorAll('.copyable-text').forEach(el => {
-                el.addEventListener('click', (e) => {
-                    const t = e.currentTarget.dataset.copy;
-                    if (t) copyToClipboard(t);
+                overlay.querySelector('#btnSubmitNote')?.addEventListener('click', () => {
+                    const s = getStudentById(sid);
+                    if (s) { s.noteSubmitDate = overlay.dataset.currentDate;
+                        saveData();
+                        showToast('动员笔记已标记', 'success');
+                        renderDetailContent(sid, overlay.dataset.currentDate); }
                 });
-            });
-        }
+                overlay.querySelector('#btnSubmitSummary')?.addEventListener('click', () => {
+                    const s = getStudentById(sid);
+                    if (s) { s.summarySubmitDate = overlay.dataset.currentDate;
+                        saveData();
+                        showToast('结业小结已标记', 'success');
+                        renderDetailContent(sid, overlay.dataset.currentDate); }
+                });
+                overlay.querySelector('#btnSaveDetail')?.addEventListener('click', () => saveDetailData(sid, overlay.dataset
+                    .currentDate));
+                overlay.querySelector('#btnCopyIdName')?.addEventListener('click', (e) => { const t = e.currentTarget.dataset
+                        .copy; if (t) copyToClipboard(t); });
+            }
 
-        // ---------- MANAGE PAGE ----------
-        function renderManagePage() {
-            let html = `
+            function saveDetailData(sid, dateStr) {
+                const overlay = document.getElementById('detailOverlay');
+                if (!appData.dailyRecords[sid]) appData.dailyRecords[sid] = {};
+                if (!appData.dailyRecords[sid][dateStr]) appData.dailyRecords[sid][dateStr] = {
+                    checkedIn: false,
+                    baseScoreType: 'normal',
+                    scores: { blackboardGroove: 0, desk: 0, drawerClean: 0, floorClean: 0, blackboard: 0, extraScore: 0,
+                        extraNote: '' },
+                    blackboardLevel: 'none'
+                };
+                const rec = appData.dailyRecords[sid][dateStr];
+                rec.baseScoreType = overlay.querySelector('#selectBaseType')?.value || 'normal';
+                rec.checkedIn = (rec.baseScoreType === 'normal' || rec.baseScoreType === 'late');
+                const bbMap = { none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8 };
+                rec.blackboardLevel = overlay.querySelector('#selectBlackboardLevel')?.value || 'none';
+                rec.scores.blackboard = bbMap[rec.blackboardLevel] || 0;
+                // 按钮切换的值读取
+                document.querySelectorAll('.score-toggle').forEach(toggle => {
+                    const field = toggle.dataset.field;
+                    const full = parseFloat(toggle.dataset.full);
+                    const activeBtn = toggle.querySelector('.toggle-btn.active');
+                    rec.scores[field] = (activeBtn && activeBtn.dataset.value === 'full') ? full : 0;
+                });
+                rec.scores.extraScore = Math.min(5, Math.max(0, parseFloat(overlay.querySelector('#scoreExtra')?.value) ||
+                    0));
+                rec.scores.extraNote = overlay.querySelector('#scoreExtraNote')?.value?.trim() || '';
+                saveData();
+                showToast('评分已保存 ✓', 'success');
+                renderDetailContent(sid, dateStr);
+            }
+
+            function attachDetailScoreListeners() {
+                const overlay = document.getElementById('detailOverlay');
+                const updateTotal = () => {
+                    const baseType = overlay.querySelector('#selectBaseType')?.value || 'normal';
+                    let base = getBaseScore(baseType);
+                    let extra = 0;
+                    document.querySelectorAll('.score-toggle').forEach(toggle => {
+                        const activeBtn = toggle.querySelector('.toggle-btn.active');
+                        if (activeBtn && activeBtn.dataset.value === 'full') extra += parseFloat(toggle.dataset
+                            .full);
+                    });
+                    const bbMap = { none: 0, quarter: 2, half: 4, lessThanQuarter: 6, moreThanHalf: 7, veryClean: 8 };
+                    extra += bbMap[overlay.querySelector('#selectBlackboardLevel')?.value] || 0;
+                    extra += Math.min(5, parseFloat(overlay.querySelector('#scoreExtra')?.value) || 0);
+                    const total = Math.min(base + extra, 100);
+                    const totalEl = overlay.querySelector('#detailTotalScore');
+                    if (totalEl) totalEl.textContent = total;
+                    const breakdown = overlay.querySelector('div[style*="基础分"]');
+                    if (breakdown) breakdown.textContent = `基础分 ${base} + 评分区 ${extra} (上限100)`;
+                };
+                overlay.querySelectorAll('#selectBaseType, #selectBlackboardLevel, #scoreExtra').forEach(el => {
+                    el.addEventListener('change', updateTotal);
+                    el.addEventListener('input', updateTotal);
+                });
+                // 按钮切换事件
+                document.querySelectorAll('.score-toggle .toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const toggle = this.parentElement;
+                        toggle.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove(
+                            'active'));
+                        this.classList.add('active');
+                        updateTotal();
+                    });
+                });
+            }
+
+            function attachCopyListeners() {
+                document.querySelectorAll('.copyable-text').forEach(el => {
+                    el.addEventListener('click', (e) => { const t = e.currentTarget.dataset.copy; if (t)
+                            copyToClipboard(t); });
+                });
+            }
+
+            // ==================== 学员管理页面 ====================
+            function renderManagePage() {
+                let html = `
                 <div class="section-title">📥 导入学员</div>
                 <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:16px;">
                     <div class="form-group"><label>姓名 *</label><input type="text" class="form-input" id="inputName" placeholder="请输入姓名"></div>
@@ -1180,9 +1307,9 @@
                 <div class="section-title">👥 学员列表</div>
                 <div style="margin-bottom:10px;"><button class="btn btn-danger btn-sm" id="btnClearAll">🗑️ 清空所有学员</button></div>
                 <div id="studentListContainer">`;
-            if (!appData.students.length) html += `<div class="empty-state">📭 暂无学员</div>`;
-            else appData.students.forEach(s => {
-                html += `
+                if (!appData.students.length) html += `<div class="empty-state">📭 暂无学员</div>`;
+                else appData.students.forEach(s => {
+                    html += `
                     <div class="student-list-item">
                         <div class="info">
                             <div class="name">${escapeHtml(s.name)} ${s.isRetake ? '<span class="badge-retake">重修</span>' : '<span class="badge-active">在读</span>'}</div>
@@ -1195,8 +1322,8 @@
                             <button class="btn btn-xs btn-danger btn-delete-student" data-student-id="${s.id}">🗑️ 删除</button>
                         </div>
                     </div>`;
-            });
-            html += `</div>
+                });
+                html += `</div>
                 <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;">
                     <div style="background:var(--panel-bg);border:2px solid var(--border);border-radius:var(--radius-lg);padding:20px;width:90%;max-width:450px;">
                         <h3 style="color:var(--text-bright);margin-bottom:12px;">编辑学员信息</h3>
@@ -1210,200 +1337,244 @@
                         <div style="display:flex;gap:8px;margin-top:14px;"><button class="btn btn-primary" style="flex:1;" id="btnSaveEdit">💾 保存</button><button class="btn btn-secondary" style="flex:1;" id="btnCancelEdit">取消</button></div>
                     </div>
                 </div>`;
-            return html;
-        }
+                return html;
+            }
 
-        function attachManageEvents() {
-            const inputName = document.getElementById('inputName');
-            const inputPinyin = document.getElementById('inputPinyin');
-            if (inputName) inputName.addEventListener('input', () => {
-                inputPinyin.value = inputName.value.trim() ? getPinyin(inputName.value.trim()) : '';
-            });
-            document.getElementById('btnImport')?.addEventListener('click', () => {
-                const name = document.getElementById('inputName')?.value.trim();
-                const pinyin = document.getElementById('inputPinyin')?.value.trim();
-                const id = document.getElementById('inputId')?.value.trim();
-                const cls = document.getElementById('inputClass')?.value.trim();
-                const phone = document.getElementById('inputPhone')?.value.trim();
-                const area = document.getElementById('inputArea')?.value.trim();
-                if (!name || !id || !cls || !phone || !area) return showToast('请填写所有字段', 'error');
-                if (appData.students.find(s => s.id === id)) return showToast('学号已存在', 'error');
-                if (appData.students.find(s => s.phone === phone)) return showToast('手机号已存在', 'error');
-                if (appData.students.find(s => s.area === area)) return showToast('责任区已存在', 'error');
-                appData.students.push({
-                    id,
-                    name,
-                    pinyin: pinyin || getPinyin(name),
-                    class: cls,
-                    area,
-                    phone,
-                    isRetake: false,
-                    noteSubmitDate: null,
-                    summarySubmitDate: null
-                });
-                saveData();
-                showToast(`学员 ${name} 导入成功`, 'success');
-                document.getElementById('inputName').value = '';
-                document.getElementById('inputPinyin').value = '';
-                document.getElementById('inputPhone').value = '';
-                renderMainContent();
-            });
-            document.querySelectorAll('.btn-edit-student').forEach(b => b.addEventListener('click', () => openEditModal(b.dataset.studentId)));
-            document.querySelectorAll('.btn-toggle-retake').forEach(b => b.addEventListener('click', () => {
-                const s = getStudentById(b.dataset.studentId);
-                if (s) {
-                    s.isRetake = !s.isRetake;
+            function attachManageEvents() {
+                const inputName = document.getElementById('inputName');
+                const inputPinyin = document.getElementById('inputPinyin');
+                if (inputName) inputName.addEventListener('input', () => { inputPinyin.value = inputName.value.trim() ?
+                        getPinyin(inputName.value.trim()) : ''; });
+                document.getElementById('btnImport')?.addEventListener('click', () => {
+                    const name = document.getElementById('inputName')?.value.trim();
+                    const pinyin = document.getElementById('inputPinyin')?.value.trim();
+                    const id = document.getElementById('inputId')?.value.trim();
+                    const cls = document.getElementById('inputClass')?.value.trim();
+                    const phone = document.getElementById('inputPhone')?.value.trim();
+                    const area = document.getElementById('inputArea')?.value.trim();
+                    if (!name || !id || !cls || !phone || !area) return showToast('请填写所有字段', 'error');
+                    if (appData.students.find(s => s.id === id)) return showToast('学号已存在', 'error');
+                    if (appData.students.find(s => s.phone === phone)) return showToast('手机号已存在', 'error');
+                    if (appData.students.find(s => s.area === area)) return showToast('责任区已存在', 'error');
+                    appData.students.push({ id, name, pinyin: pinyin || getPinyin(name), class: cls, area, phone,
+                        isRetake: false, noteSubmitDate: null, summarySubmitDate: null });
                     saveData();
-                    showToast(s.isRetake ? '已设为重修' : '已恢复在读', 'success');
+                    showToast(`学员 ${name} 导入成功`, 'success');
+                    document.getElementById('inputName').value = '';
+                    document.getElementById('inputPinyin').value = '';
+                    document.getElementById('inputPhone').value = '';
                     renderMainContent();
-                }
-            }));
-            document.querySelectorAll('.btn-delete-student').forEach(b => b.addEventListener('click', () => {
-                const sid = b.dataset.studentId;
-                if (confirm(`确定要删除学员 ${getStudentById(sid)?.name || sid} 吗？`)) {
-                    if (confirm(`再次确认删除？此操作不可恢复！`)) {
-                        appData.students = appData.students.filter(s => s.id !== sid);
-                        if (appData.dailyRecords[sid]) delete appData.dailyRecords[sid];
+                });
+                document.querySelectorAll('.btn-edit-student').forEach(b => b.addEventListener('click', () =>
+                    openEditModal(b.dataset.studentId)));
+                document.querySelectorAll('.btn-toggle-retake').forEach(b => b.addEventListener('click', () => {
+                    const s = getStudentById(b.dataset.studentId);
+                    if (s) { s.isRetake = !s.isRetake;
                         saveData();
-                        showToast('学员已删除', 'success');
-                        renderMainContent();
+                        showToast(s.isRetake ? '已设为重修' : '已恢复在读', 'success');
+                        renderMainContent(); }
+                }));
+                document.querySelectorAll('.btn-delete-student').forEach(b => b.addEventListener('click', () => {
+                    const sid = b.dataset.studentId;
+                    if (confirm(`确定要删除学员 ${getStudentById(sid)?.name || sid} 吗？`)) {
+                        if (confirm(`再次确认删除？此操作不可恢复！`)) {
+                            appData.students = appData.students.filter(s => s.id !== sid);
+                            if (appData.dailyRecords[sid]) delete appData.dailyRecords[sid];
+                            saveData();
+                            showToast('学员已删除', 'success');
+                            renderMainContent();
+                        }
                     }
-                }
-            }));
-            document.getElementById('btnClearAll')?.addEventListener('click', () => {
-                if (confirm('确定要清空所有学员吗？')) {
-                    if (confirm('再次确认清空？所有学员及评分数据将被永久删除！')) {
-                        appData.students = [];
-                        appData.dailyRecords = {};
-                        saveData();
-                        showToast('所有学员已清空', 'success');
-                        renderMainContent();
+                }));
+                document.getElementById('btnClearAll')?.addEventListener('click', () => {
+                    if (confirm('确定要清空所有学员吗？')) {
+                        if (confirm('再次确认清空？所有学员及评分数据将被永久删除！')) {
+                            appData.students = [];
+                            appData.dailyRecords = {};
+                            saveData();
+                            showToast('所有学员已清空', 'success');
+                            renderMainContent();
+                        }
                     }
-                }
-            });
-            document.getElementById('btnSaveEdit')?.addEventListener('click', () => {
-                const sid = document.getElementById('editStudentId')?.value;
+                });
+                document.getElementById('btnSaveEdit')?.addEventListener('click', () => {
+                    const sid = document.getElementById('editStudentId')?.value;
+                    const s = getStudentById(sid);
+                    if (!s) return;
+                    const newId = document.getElementById('editId')?.value.trim();
+                    if (newId !== sid && appData.students.find(s => s.id === newId)) return showToast('学号已存在',
+                        'error');
+                    s.name = document.getElementById('editName')?.value.trim() || s.name;
+                    s.pinyin = getPinyin(s.name);
+                    s.id = newId || s.id;
+                    s.class = document.getElementById('editClass')?.value.trim() || s.class;
+                    s.phone = document.getElementById('editPhone')?.value.trim() || s.phone;
+                    s.area = document.getElementById('editArea')?.value.trim() || s.area;
+                    if (newId && newId !== sid) {
+                        if (appData.dailyRecords[sid]) { appData.dailyRecords[newId] = appData.dailyRecords[sid];
+                            delete appData.dailyRecords[sid]; }
+                    }
+                    saveData();
+                    document.getElementById('editModal').style.display = 'none';
+                    showToast('学员信息已更新', 'success');
+                    renderMainContent();
+                });
+                document.getElementById('btnCancelEdit')?.addEventListener('click', () => document.getElementById('editModal')
+                    .style.display = 'none');
+                document.getElementById('editModal')?.addEventListener('click', (e) => { if (e.target === document
+                        .getElementById('editModal')) document.getElementById('editModal').style.display = 'none'; });
+                document.getElementById('editName')?.addEventListener('input', function() { document.getElementById(
+                        'editPinyin').value = getPinyin(this.value.trim()); });
+            }
+
+            function openEditModal(sid) {
                 const s = getStudentById(sid);
                 if (!s) return;
-                const newId = document.getElementById('editId')?.value.trim();
-                if (newId !== sid && appData.students.find(s => s.id === newId)) return showToast('学号已存在', 'error');
-                s.name = document.getElementById('editName')?.value.trim() || s.name;
-                s.pinyin = getPinyin(s.name);
-                s.id = newId || s.id;
-                s.class = document.getElementById('editClass')?.value.trim() || s.class;
-                s.phone = document.getElementById('editPhone')?.value.trim() || s.phone;
-                s.area = document.getElementById('editArea')?.value.trim() || s.area;
-                if (newId && newId !== sid) {
-                    if (appData.dailyRecords[sid]) {
-                        appData.dailyRecords[newId] = appData.dailyRecords[sid];
-                        delete appData.dailyRecords[sid];
+                document.getElementById('editStudentId').value = s.id;
+                document.getElementById('editName').value = s.name;
+                document.getElementById('editPinyin').value = s.pinyin;
+                document.getElementById('editId').value = s.id;
+                document.getElementById('editClass').value = s.class;
+                document.getElementById('editPhone').value = s.phone;
+                document.getElementById('editArea').value = s.area;
+                document.getElementById('editModal').style.display = 'flex';
+            }
+
+            // ==================== 数据总览页面 ====================
+            function renderOverviewPage() {
+                const allStudents = appData.students; // 包含重修学员，但按钮颜色区分
+                if (!allStudents.length) return `<div class="empty-state">📊 暂无学员</div>`;
+                const defaultId = allStudents[0].id;
+                let html = `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
+                allStudents.forEach((s, i) => {
+                    const retakeClass = s.isRetake ? ' retake' : '';
+                    html +=
+                        `<button class="student-tab ${i === 0 ? 'active' : ''}${retakeClass}" data-student-id="${s.id}">${escapeHtml(s.name)}</button>`;
+                });
+                html += `</div><div id="overviewDataContainer">${renderOverviewStudentData(defaultId)}</div>`;
+                return html;
+            }
+
+            function renderOverviewStudentData(sid) {
+                const student = getStudentById(sid);
+                if (!student) return '<div class="empty-state">学员不存在</div>';
+                const records = appData.dailyRecords[sid] || {};
+                const dateKeys = Object.keys(records).sort();
+                if (!dateKeys.length) return `
+                    <div class="empty-state">暂无评分记录</div>
+                    <div class="avg-display">
+                        <div class="avg-label">📈 平均分</div>
+                        <div class="avg-score">--</div>
+                        <div class="rank-info">🏆 排名: --</div>
+                        <div style="margin-top:8px;font-size:var(--font-xs);color:var(--comment);">
+                            <span class="copyable-text" data-copy="${student.name}">👤 ${escapeHtml(student.name)} (点击复制)</span><br>
+                            班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${escapeHtml(student.phone)}
+                        </div>
+                    </div>`;
+                let sum = 0,
+                    cnt = 0;
+                const sorted = [...dateKeys].sort().reverse();
+                let rows = '';
+                // 统计缺勤天数
+                let absentCount = 0;
+                let sickCount = 0;
+                sorted.forEach(d => {
+                    const rec = records[d];
+                    const total = calcTotalScore(rec);
+                    if (rec.baseScoreType === 'absent') absentCount++;
+                    if (rec.baseScoreType === 'sick') sickCount++;
+                    let tag = '';
+                    if (rec.baseScoreType === 'sick') tag = '<span class="tag tag-sick">请假</span>';
+                    else if (rec.baseScoreType === 'absent') tag = '<span class="tag tag-absent">旷班</span>';
+                    else if (rec.baseScoreType === 'late') tag = '<span class="tag tag-late">迟到</span>';
+                    else tag = '<span class="tag tag-normal">正常</span>';
+                    // 缺勤记录默认隐藏，通过 CSS 类控制
+                    const isAbsent = (rec.baseScoreType === 'absent' || rec.baseScoreType === 'sick');
+                    const rowClass = isAbsent ? 'absent-record hidden' : '';
+                    rows +=
+                        `<div class="date-record ${rowClass}" data-type="${rec.baseScoreType}"><span class="date-col">📅 ${formatDateShort(d)}</span>${tag}<span class="score-col copyable-text" data-copy="${total.toFixed(2)}">${total.toFixed(2)} 分</span></div>`;
+                    sum += total;
+                    cnt++;
+                });
+                const avg = cnt ? sum / cnt : 0;
+                const allAvgs = [];
+                getActiveStudents().forEach(s => {
+                    const recs = appData.dailyRecords[s.id] || {};
+                    const keys = Object.keys(recs);
+                    if (keys.length) {
+                        let ssum = 0;
+                        keys.forEach(k => ssum += calcTotalScore(recs[k]));
+                        allAvgs.push({ id: s.id, name: s.name, avg: ssum / keys.length });
                     }
-                }
-                saveData();
-                document.getElementById('editModal').style.display = 'none';
-                showToast('学员信息已更新', 'success');
-                renderMainContent();
-            });
-            document.getElementById('btnCancelEdit')?.addEventListener('click', () => document.getElementById('editModal').style.display = 'none');
-            document.getElementById('editModal')?.addEventListener('click', (e) => {
-                if (e.target === document.getElementById('editModal')) document.getElementById('editModal').style.display = 'none';
-            });
-            document.getElementById('editName')?.addEventListener('input', function () {
-                document.getElementById('editPinyin').value = getPinyin(this.value.trim());
-            });
-        }
-
-        function openEditModal(sid) {
-            const s = getStudentById(sid);
-            if (!s) return;
-            document.getElementById('editStudentId').value = s.id;
-            document.getElementById('editName').value = s.name;
-            document.getElementById('editPinyin').value = s.pinyin;
-            document.getElementById('editId').value = s.id;
-            document.getElementById('editClass').value = s.class;
-            document.getElementById('editPhone').value = s.phone;
-            document.getElementById('editArea').value = s.area;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        // ---------- OVERVIEW PAGE ----------
-        function renderOverviewPage() {
-            const active = getActiveStudents();
-            if (!active.length) return `<div class="empty-state">📊 暂无在读学员</div>`;
-            const defaultId = active[0].id;
-            let html = `<div class="section-title">📊 数据总览</div><div class="overview-student-tabs" id="overviewTabs">`;
-            active.forEach((s, i) => html += `<button class="student-tab ${i === 0 ? 'active' : ''}" data-student-id="${s.id}">${escapeHtml(s.name)}</button>`);
-            html += `</div><div id="overviewDataContainer">${renderOverviewStudentData(defaultId)}</div>`;
-            return html;
-        }
-
-        function renderOverviewStudentData(sid) {
-            const student = getStudentById(sid);
-            if (!student) return '<div class="empty-state">学员不存在</div>';
-            const records = appData.dailyRecords[sid] || {};
-            const dateKeys = Object.keys(records).sort();
-            if (!dateKeys.length) return '<div class="empty-state">暂无评分记录</div><div class="avg-display">--</div>';
-            let sum = 0, cnt = 0;
-            const sorted = [...dateKeys].sort().reverse();
-            let rows = '';
-            sorted.forEach(d => {
-                const rec = records[d];
-                const total = calcTotalScore(rec);
-                sum += total;
-                cnt++;
-                let tag = '';
-                if (rec.baseScoreType === 'sick') tag = '<span class="tag tag-sick">病假</span>';
-                else if (rec.baseScoreType === 'absent') tag = '<span class="tag tag-absent">旷班</span>';
-                else if (rec.baseScoreType === 'late') tag = '<span class="tag tag-late">迟到</span>';
-                else tag = '<span class="tag tag-normal">正常</span>';
-                rows += `<div class="date-record"><span class="date-col">📅 ${formatDateShort(d)}</span>${tag}<span class="score-col copyable-text" data-copy="${total.toFixed(2)}">${total.toFixed(2)} 分</span></div>`;
-            });
-            const avg = cnt ? sum / cnt : 0;
-            const allAvgs = [];
-            getActiveStudents().forEach(s => {
-                const recs = appData.dailyRecords[s.id] || {};
-                const keys = Object.keys(recs);
-                if (keys.length) {
-                    let ssum = 0;
-                    keys.forEach(k => ssum += calcTotalScore(recs[k]));
-                    allAvgs.push({id: s.id, name: s.name, avg: ssum / keys.length});
-                }
-            });
-            allAvgs.sort((a, b) => b.avg - a.avg);
-            const rank = allAvgs.findIndex(a => a.id === sid) + 1;
-            const avgHtml = `
+                });
+                allAvgs.sort((a, b) => b.avg - a.avg);
+                const rank = allAvgs.findIndex(a => a.id === sid) + 1;
+                const avgHtml = `
                 <div class="avg-display">
                     <div class="avg-label">📈 平均分 (共${cnt}条记录)</div>
                     <div class="avg-score copyable-text" data-copy="${avg.toFixed(2)}">${avg.toFixed(2)}</div>
                     <div class="rank-info">🏆 排名: 第 <span style="color:var(--yellow);">${rank}</span> 名 / 共 ${allAvgs.length} 人</div>
-                    <div style="margin-top:8px;"><span class="copyable-text" data-copy="${student.name}" style="color:var(--blue);font-weight:600;">👤 ${escapeHtml(student.name)} (点击复制姓名)</span></div>
+                    <div style="margin-top:8px;font-size:var(--font-xs);color:var(--comment);">
+                        <span class="copyable-text" data-copy="${student.name}">👤 ${escapeHtml(student.name)} (点击复制)</span><br>
+                        班级: ${escapeHtml(student.class)} | 岗位: ${escapeHtml(student.area)} | 联系方式: ${escapeHtml(student.phone)}
+                    </div>
+                    <div style="margin-top:6px;">
+                        <button class="btn btn-xs btn-outline" id="btnToggleAbsent">👁️ 显示缺勤记录 (请假${sickCount}/旷班${absentCount})</button>
+                    </div>
                 </div>`;
-            return rows + avgHtml;
-        }
+                return rows + avgHtml;
+            }
 
-        function attachOverviewEvents() {
-            document.querySelectorAll('#overviewTabs .student-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('#overviewTabs .student-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById('overviewDataContainer').innerHTML = renderOverviewStudentData(tab.dataset.studentId);
-                    attachCopyListeners();
+            function attachOverviewEvents() {
+                document.querySelectorAll('#overviewTabs .student-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const sid = tab.dataset.studentId;
+                        const student = getStudentById(sid);
+                        // 如果学员是重修状态，点击提示
+                        if (student && student.isRetake) {
+                            showToast('该学员已被标记为重修', 'error');
+                        }
+                        document.querySelectorAll('#overviewTabs .student-tab').forEach(t => t.classList
+                            .remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById('overviewDataContainer').innerHTML =
+                            renderOverviewStudentData(sid);
+                        attachOverviewEvents(); // 重新绑定新渲染的元素事件
+                        attachCopyListeners();
+                    });
                 });
-            });
-            attachCopyListeners();
-        }
+                // 切换缺勤记录显示/隐藏按钮
+                const toggleBtn = document.getElementById('btnToggleAbsent');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        const container = document.getElementById('overviewDataContainer');
+                        const absentRows = container.querySelectorAll('.absent-record');
+                        const isHidden = absentRows.length > 0 && absentRows[0].classList.contains('hidden');
+                        absentRows.forEach(row => {
+                            if (isHidden) row.classList.remove('hidden');
+                            else row.classList.add('hidden');
+                        });
+                        this.textContent = isHidden ? '🙈 隐藏缺勤记录' : '👁️ 显示缺勤记录';
+                    });
+                }
+                attachCopyListeners();
+            }
 
-        // ---------- INIT ----------
-        function init() {
-            loadData();
-            renderMainContent();
-            window.addEventListener('popstate', () => {
-                if (document.getElementById('detailOverlay').style.display === 'block') closeDetailOverlay();
-            });
-        }
+            // 添加 hidden 类的样式
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = `.absent-record.hidden { display: none; }`;
+            document.head.appendChild(styleSheet);
 
-        init();
-    })();
-</script>
+            // ==================== 初始化 ====================
+            function init() {
+                loadData();
+                renderMainContent();
+                window.addEventListener('popstate', () => {
+                    if (document.getElementById('detailOverlay').style.display === 'block') closeDetailOverlay();
+                });
+            }
+            init();
+        })();
+    </script>
 </body>
 </html>
